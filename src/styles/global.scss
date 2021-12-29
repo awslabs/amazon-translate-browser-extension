@@ -1,0 +1,104 @@
+$awsBg: rgb(242, 243, 243);
+$awsGray: rgb(170, 183, 184);
+$awsBlack: rgb(22, 25, 31);
+$awsOrange: rgb(236, 114, 17);
+$awsOrangeHover: rgb(235, 95, 7);
+
+.aws-container {
+  margin: 50px auto;
+  box-shadow: 0 1px 1px 0 var(--awsui-color-shadow-medium, rgba(0, 28, 36, 0.3)),
+    1px 1px 1px 0 var(--awsui-color-shadow-side, rgba(0, 28, 36, 0.15)),
+    -1px 1px 1px 0 var(--awsui-color-shadow-side, rgba(0, 28, 36, 0.15));
+}
+
+.aws-label {
+  font-size: 14px;
+  line-height: 20px;
+  color: $awsBlack;
+}
+
+.aws-form-row {
+  width: 75%;
+}
+
+.aws-field {
+  display: block;
+  border: 1px solid $awsGray;
+  border-radius: 2px;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 4px 10px;
+  width: 100%;
+  color: $awsBlack;
+}
+
+.aws-input {
+  border: 1px solid $awsGray;
+  border-radius: 2px;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 4px 10px;
+  width: 100%;
+  color: $awsBlack;
+}
+
+.aws-btn {
+  background-color: $awsOrange;
+  border-radius: 2px;
+  color: #fff;
+  font-family: "Helvetica Neue", arial;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 4px 40px;
+
+  &:hover,
+  &:active {
+    background-color: $awsOrangeHover;
+  }
+
+  &[disabled] {
+    background-color: $awsGray;
+  }
+}
+
+.form-header {
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 20px;
+  color: $awsBlack;
+  background-color: var(--awsui-color-background-container-header, #fafafa);
+  border-bottom: 1px solid var(--awsui-color-border-divider-default, #eaeded);
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #fff;
+
+  > div {
+    margin: 15px 0;
+  }
+}
+
+.form-message {
+  margin-top: 0 !important;
+  border-radius: 2px;
+  padding: 20px;
+  border-width: 1px;
+  border-style: solid;
+  font-size: 14px;
+
+  &:not(.hasError) {
+    background-color: #bce5b7;
+    border-color: darken(#bce5b7, 15%);
+    color: darken(#bce5b7, 55%);
+  }
+
+  &.hasError {
+    background-color: #e5b7b7;
+    border-color: darken(#e5b7b7, 15%);
+    color: darken(#e5b7b7, 55%);
+  }
+}
