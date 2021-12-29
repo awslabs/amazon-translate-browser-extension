@@ -1,9 +1,7 @@
 name: Validation
-on:
-  pull_request:
-    branches: [main]
-  merge:
-    branches: [main]
+# on:
+#   pull_request:
+#     branches: [main]
 
 jobs:
   lint:
