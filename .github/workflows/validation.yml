@@ -4,10 +4,9 @@ on:
     branches: [master]
 
 jobs:
-  runs-on: ubuntu-latest
-
   lint:
     name: Lint
+    runs-on: ubuntu-latest
     steps:
       - name: Setup node
         uses: actions/setup-node@v1
@@ -29,6 +28,7 @@ jobs:
         run: pnpm lint
   test:
     name: Test
+    runs-on: ubuntu-latest
     steps:
       - name: Setup node
         uses: actions/setup-node@v1
@@ -50,6 +50,7 @@ jobs:
         run: pnpm test
   build:
     name: Build
+    runs-on: ubuntu-latest
     steps:
       - name: Setup node
         uses: actions/setup-node@v1
@@ -68,4 +69,3 @@ jobs:
           version: 6.0.2
           run_install: true
       - name: Run unit tests
-        run: pnpm build
