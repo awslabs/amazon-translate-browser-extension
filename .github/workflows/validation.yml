@@ -22,9 +22,8 @@ jobs:
             ${{ runner.os }}-
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.0.2
-          run_install: true
+      - name: Install dependencies
+        run: pnpm install
       - name: Run linter
         run: pnpm lint
   test:
@@ -44,9 +43,8 @@ jobs:
             ${{ runner.os }}-
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.0.2
-          run_install: true
+      - name: Install dependencies
+        run: pnpm install
       - name: Run unit tests
         run: pnpm test
   build:
@@ -66,8 +64,7 @@ jobs:
             ${{ runner.os }}-
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.0.2
-          run_install: true
+      - name: Install dependencies
+        run: pnpm install
       - name: Run build
         run: pnpm build
