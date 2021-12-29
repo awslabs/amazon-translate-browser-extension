@@ -68,4 +68,5 @@ jobs:
         with:
           version: 6.0.2
           run_install: true
-      - name: Run unit tests
+      - name: Run build
+        run: pnpm build
