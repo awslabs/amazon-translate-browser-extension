@@ -1,0 +1,71 @@
+name: Validation
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  runs-on: ubuntu-latest
+
+  lint:
+    name: Lint
+    steps:
+      - name: Setup node
+        uses: actions/setup-node@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.0.2
+          run_install: true
+      - name: Run linter
+        run: pnpm lint
+  test:
+    name: Test
+    steps:
+      - name: Setup node
+        uses: actions/setup-node@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.0.2
+          run_install: true
+      - name: Run unit tests
+        run: pnpm test
+  build:
+    name: Build
+    steps:
+      - name: Setup node
+        uses: actions/setup-node@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.0.2
+          run_install: true
+      - name: Run unit tests
+        run: pnpm build

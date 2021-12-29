@@ -24,7 +24,7 @@ To use this extension you will need to follow the steps below:
 4. In the extension settings, select the region closest to you that supports the language pairs you desire to use.
 5. Copy the **Access Key ID** and paste it into the appropriate spot in the extension settings.
 6. Copy the **Secret Access Key** and paste it into the appropriate spot in the extension settings.
-7. Click Save Settings
+7. Click Save Settings.
 
 After you have done this you can now use the extension popup to translate web pages using your provided password.
 
