@@ -1,7 +1,7 @@
 import { sendMessage, onMessage } from 'webext-bridge';
 import { Tabs } from 'webextension-polyfill';
 
-// only on dev mode
+// @ts-expect-error only on dev mode
 if (import.meta.hot) {
   // @ts-expect-error for background HMR
   import('/@vite/client');
@@ -42,11 +42,11 @@ onMessage('get-current-tab', async () => {
   try {
     const tab = await browser.tabs.get(previousTabId);
     return {
-      title: tab?.id,
+      title: `${tab?.id}`,
     };
   } catch {
     return {
-      title: undefined,
+      title: '',
     };
   }
 });
