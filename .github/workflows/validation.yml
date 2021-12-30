@@ -15,6 +15,10 @@ jobs:
           node-version: '14'
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.0.2
       - name: Cache pnpm modules
         uses: actions/cache@v2
         with:
@@ -22,10 +26,6 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.0.2
       - name: Install dependencies
         run: pnpm install
       - name: Run linter
@@ -40,6 +40,10 @@ jobs:
           node-version: '14'
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.0.2
       - name: Cache pnpm modules
         uses: actions/cache@v2
         with:
@@ -47,10 +51,6 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.0.2
       - name: Install dependencies
         run: pnpm install
       - name: Run unit tests
@@ -65,6 +65,10 @@ jobs:
           node-version: '14'
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.0.2
       - name: Cache pnpm modules
         uses: actions/cache@v2
         with:
@@ -72,10 +76,6 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.0.2
       - name: Install dependencies
         run: pnpm install
       - name: Run build

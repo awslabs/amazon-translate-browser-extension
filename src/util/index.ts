@@ -1,2 +1,2 @@
-export * from "./languages";
-export * from "./tabs";
+export * from './languages';
+export * from './tabs';

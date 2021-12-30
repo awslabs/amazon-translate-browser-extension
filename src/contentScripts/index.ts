@@ -16,10 +16,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { TranslateClientConfig } from "@aws-sdk/client-translate";
-import { onMessage, sendMessage } from "webext-bridge";
+import { TranslateClientConfig } from '@aws-sdk/client-translate';
+import { onMessage, sendMessage } from 'webext-bridge';
 import * as lockr from 'lockr';
-import { TranslateCommandData } from "../_contracts";
+import { TranslateCommandData } from '../_contracts';
 import {
   crawl,
   getCache,
@@ -49,41 +49,43 @@ lockr.setPrefix('amazonTranslate_');
  * languages for translation.
  */
 function messageHandler() {
-  onMessage<TranslateCommandData, "translate">("translate", ({ sender: { context, tabId }, data }) => {
+  onMessage<TranslateCommandData, 'translate'>(
+    'translate',
+    ({ sender: { context, tabId }, data }) => {
+      // Destructure our configuration
+      const { creds, langs } = data;
+      const { source, target } = langs;
 
-    // Destructure our configuration
-    const { creds, langs } = data;
-    const { source, target } = langs;
+      // Send a message informing the popup that the translation has started
+      sendMessage('status', { status: 'translating', message: '' }, 'popup');
 
-    // Send a message informing the popup that the translation has started
-    sendMessage("status", { status: "translating", message: '' }, 'popup');
+      // Start the webpage translation process
+      const startingEl = document.querySelector('body');
 
-    // Start the webpage translation process
-    const startingEl = document.querySelector("body");
+      startTranslation(creds, source, target, startingEl)
+        .then(() => {
+          // Send a message to the popup indicating the translation has completed
+          sendMessage('status', { status: 'complete', message: 'Translation complete.' }, 'popup');
+        })
+        .catch(e => {
+          console.error(e, startingEl);
 
-    startTranslation(creds, source, target, startingEl)
-      .then(() => {
-        // Send a message to the popup indicating the translation has completed
-        sendMessage("status", { status: "complete", message: 'Translation complete.' }, 'popup');
-      })
-      .catch((e) => {
-        console.error(e, startingEl);
-
-        // Send a message to the popup indicating that an error occurred during translation
-        sendMessage(
-          "status",
-          { status: "error", message: "An error occurred. The document failed to translate." },
-          { context, tabId }
-        );
-      })
-  });
+          // Send a message to the popup indicating that an error occurred during translation
+          sendMessage(
+            'status',
+            { status: 'error', message: 'An error occurred. The document failed to translate.' },
+            { context, tabId }
+          );
+        });
+    }
+  );
 
   // Listen to requests to clear the current page's translation cache
-  onMessage("clearCache", ({ sender: { context, tabId } }) => {
+  onMessage('clearCache', ({ sender: { context, tabId } }) => {
     lockr.rm(window.location.href);
     sendMessage(
-      "status",
-      { status: "complete", message: 'Cleared cache for this page.' },
+      'status',
+      { status: 'complete', message: 'Cleared cache for this page.' },
       { context, tabId }
     );
   });
@@ -136,10 +138,7 @@ async function startTranslation(
       // Apply the translated documents to the DOM
       applyTranslation(nodeMap, translatedPages);
     }
-
   } else {
-    throw new Error("Amazon Translate Error: The top level tag does not exist on the document.");
+    throw new Error('Amazon Translate Error: The top level tag does not exist on the document.');
   }
 }
-
-

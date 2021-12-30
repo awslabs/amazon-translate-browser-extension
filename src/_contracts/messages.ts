@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import { TranslateClientConfig } from "@aws-sdk/client-translate";
+import { TranslateClientConfig } from '@aws-sdk/client-translate';
 
 /**
  * This interface describes the schema of the message sent from the popup window to the content-script.
@@ -17,7 +17,7 @@ export interface TranslateCommandData extends JsonObject {
 }
 
 export interface TranslateStatusData {
-  status: "translating" | "complete" | "";
+  status: 'translating' | 'complete' | '';
   message: string;
 }
 
@@ -27,5 +27,5 @@ export interface TranslateErrorData {
 
 // These types are copied from TypeFest to support web-ext interfaces
 type JsonObject = { [Key in string]?: JsonValue };
-interface JsonArray extends Array<JsonValue> { };
+interface JsonArray extends Array<JsonValue> {}
 type JsonValue = string | number | boolean | null | JsonObject | JsonArray;

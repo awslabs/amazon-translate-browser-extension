@@ -14,10 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  Translate,
-  TranslateTextCommandOutput,
-} from "@aws-sdk/client-translate";
+import { Translate, TranslateTextCommandOutput } from '@aws-sdk/client-translate';
 
 export const translateText = (
   instance: Translate,
@@ -26,16 +23,13 @@ export const translateText = (
   TargetLanguageCode: string
 ): Promise<TranslateTextCommandOutput> => {
   return new Promise((resolve, reject) => {
-    instance.translateText(
-      { Text, SourceLanguageCode, TargetLanguageCode },
-      (err, data) => {
-        if (err) {
-          reject(err);
-        }
-        if (data) {
-          resolve(data);
-        }
+    instance.translateText({ Text, SourceLanguageCode, TargetLanguageCode }, (err, data) => {
+      if (err) {
+        reject(err);
       }
-    );
+      if (data) {
+        resolve(data);
+      }
+    });
   });
 };

@@ -3,7 +3,7 @@ import {
   TranslateTextCommand,
   TranslateTextCommandOutput,
   TranslateClientConfig,
-} from "@aws-sdk/client-translate";
+} from '@aws-sdk/client-translate';
 import * as lockr from 'lockr';
 import {
   TranslateData,
@@ -12,12 +12,12 @@ import {
   PageMap,
   CacheLangs,
   CacheTextMap,
-} from "../_contracts";
+} from '../_contracts';
 
 // The maximum translate document size in bytes
 const DOC_BOUNDARY = 500;
 // Node types that the crawler should ignore
-const IGNORED_NODES = ['SCRIPT', 'STYLE', 'PRE', '#comment', 'NOSCRIPT']
+const IGNORED_NODES = ['SCRIPT', 'STYLE', 'PRE', '#comment', 'NOSCRIPT'];
 // The formatting to apply to pages before translation
 const PAGE_PATTERNIZE = (id: string, text: string) => `<|${id}:${text}|>`;
 // The pattern to split translated documents into pages
@@ -42,10 +42,7 @@ export function crawl(
   }
   // Don't crawl Script or Style tags
   const name = node.nodeName;
-  if (
-    !IGNORED_NODES.includes(name) &&
-    node.childNodes.length > 0
-  ) {
+  if (!IGNORED_NODES.includes(name) && node.childNodes.length > 0) {
     // Crawl the node children
     node.childNodes.forEach((child: Node) => {
       crawl(child, data);
@@ -72,7 +69,7 @@ export function validNodeText(node: Node): string | null {
 
 /**
  * Creates an array of pages (strings for translation) from a page map.
- * 
+ *
  * Example Page: "<|1:some text|>"
  */
 export function writePages(pages: PageMap) {
@@ -82,13 +79,13 @@ export function writePages(pages: PageMap) {
 /**
  * Takes DOM text pages (text lines) and binds them into documents (chunks) for
  * batched translation.
- * 
+ *
  * **Example Pages:**
- * 
+ *
  * `["1:some text","2:more text","3:even more text"]`
- * 
+ *
  * **Example return value (Documents):**
- * 
+ *
  * `["<|1:some text|><|2:more text|>", "<|3:even more text|>"]`
  */
 export function bindPages(pages: string[]): Documents {
@@ -104,16 +101,16 @@ export function bindPages(pages: string[]): Documents {
       docs.push(page);
       return docs;
     },
-    [""] as Documents
+    [''] as Documents
   );
 }
 
 /**
  * Takes the user's credentials as well as the source language code and target language
  * code and makes Amazon Translate API requests for the provided text docs.
- * 
+ *
  * **Example return value (Translated Documents):**
- * 
+ *
  * `["<|1:algún texto|><|2:más texto|>", "<|3:aún más texto|>"]`
  */
 export async function translateDocuments(
@@ -123,15 +120,20 @@ export async function translateDocuments(
   docs: Documents
 ): Promise<Documents> {
   const client = new TranslateClient(creds);
-  const responses = await sendDocumentsToTranslate(client, SourceLanguageCode, TargetLanguageCode, docs);
+  const responses = await sendDocumentsToTranslate(
+    client,
+    SourceLanguageCode,
+    TargetLanguageCode,
+    docs
+  );
 
-  if (responses.some(res => res.status === "rejected")) {
-    throw new Error("One or more parts of the document failed to translate.");
+  if (responses.some(res => res.status === 'rejected')) {
+    throw new Error('One or more parts of the document failed to translate.');
   }
 
   return responses.reduce((docs, response) => {
-    if (response.status === "fulfilled") {
-      return docs.concat([response.value.TranslatedText ?? ""]);
+    if (response.status === 'fulfilled') {
+      return docs.concat([response.value.TranslatedText ?? '']);
     }
     return docs;
   }, [] as Documents);
@@ -147,7 +149,7 @@ async function sendDocumentsToTranslate(
   docs: Documents
 ) {
   return await Promise.allSettled(
-    docs.map((doc) => {
+    docs.map(doc => {
       return new Promise<TranslateTextCommandOutput>((resolve, reject) => {
         const command = new TranslateTextCommand({
           Text: doc,
@@ -155,7 +157,7 @@ async function sendDocumentsToTranslate(
           TargetLanguageCode,
         });
         translateDocument(client, command, resolve, reject);
-      })
+      });
     })
   );
 }
@@ -169,19 +171,21 @@ function translateDocument(
   command: TranslateTextCommand,
   resolve: (value: TranslateTextCommandOutput) => void,
   reject: (reason?: any) => void,
-  attempts: number = 0,
+  attempts: number = 0
 ) {
   setTimeout(() => {
-    client.send(command)
+    client
+      .send(command)
       .then(res => {
         resolve(res);
-      }).catch(e => {
+      })
+      .catch(e => {
         if (attempts < 4) {
           translateDocument(client, command, resolve, reject, attempts + 1);
         } else {
           reject(e);
         }
-      })
+      });
   }, Math.pow(10, attempts));
 }
 
@@ -189,13 +193,11 @@ function translateDocument(
  * Breaks apart a set of documents into pages.
  */
 export function breakDocuments(docs: Documents): string[] {
-  return docs.reduce((acc, doc) => (
-    acc.concat(
-      doc
-        .split(PAGE_PATTERN)
-        .filter((line: string) => line !== "" && line !== " ")
-    )
-  ), [] as string[]);
+  return docs.reduce(
+    (acc, doc) =>
+      acc.concat(doc.split(PAGE_PATTERN).filter((line: string) => line !== '' && line !== ' ')),
+    [] as string[]
+  );
 }
 
 /**
@@ -203,7 +205,7 @@ export function breakDocuments(docs: Documents): string[] {
  */
 export function breakPages(pages: string[]): PageMap {
   return pages.reduce((acc, page) => {
-    const [key] = page.split(":");
+    const [key] = page.split(':');
     const text = page.substring(key.length + 1);
     acc[key] = text;
     return acc;
@@ -233,10 +235,15 @@ export function makeCacheTextMap(pageMap: PageMap, translatedPageMap: PageMap): 
 /**
  * Caches the translated text map with a composite key of the source language code and the target
  * language code. The map is cached with a top level key that equals the current browser URL. When
- * the user revisits a page and it has language cached it can be pulled directly from the cache 
+ * the user revisits a page and it has language cached it can be pulled directly from the cache
  * rather than accessing the Amazon Translate api's.
  */
-export function cacheTranslation(url: string, source: string, target: string, textMap: CacheTextMap): void {
+export function cacheTranslation(
+  url: string,
+  source: string,
+  target: string,
+  textMap: CacheTextMap
+): void {
   const cache: CacheLangs = lockr.get(url, {});
   const langPair = `${source}-${target}`;
   const langPairCache = cache[langPair] ?? {};
@@ -247,17 +254,21 @@ export function cacheTranslation(url: string, source: string, target: string, te
 
 /**
  * Applies cached translations to the DOM.
- * 
+ *
  * NOTE: This could probably be merged with applyTranslation when we have time.
  */
-export function applyCachedTranslation(pageMap: PageMap, nodeMap: NodeMap, cache: CacheTextMap): void {
+export function applyCachedTranslation(
+  pageMap: PageMap,
+  nodeMap: NodeMap,
+  cache: CacheTextMap
+): void {
   Object.entries(pageMap).forEach(([id, page]) => {
     const translated = cache[page];
     const node = nodeMap[Number(id)];
     if (node && translated) {
       node.textContent = translated;
     }
-  })
+  });
 }
 
 /**
@@ -266,11 +277,11 @@ export function applyCachedTranslation(pageMap: PageMap, nodeMap: NodeMap, cache
  */
 export function applyTranslation(nodeMap: NodeMap, pages: string[]) {
   // Loop over each
-  pages.forEach((page) => {
-    let [id, text] = page.split(":");
+  pages.forEach(page => {
+    let [id, text] = page.split(':');
     // This is a workaround for an Amazon Translate bug that occasionally returns the wrong colon
     if (id === undefined || text === undefined) {
-      [id, text] = page.split("：");
+      [id, text] = page.split('：');
     }
     const node = nodeMap[Number(id)];
     if (node) {

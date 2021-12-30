@@ -26,7 +26,8 @@
     "start:firefox": "web-ext run --source-dir ./extension --target=firefox-desktop",
     "test": "ava",
     "clear": "rimraf extension/dist extension/manifest.json extension.*",
-    "lint": "eslint 'src/**/*.{json,ts,js,vue}'"
+    "lint": "prettier -c .",
+    "lint:fix": "prettier -w ."
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.9.0",
@@ -54,6 +55,7 @@
     "jsdom": "^18.0.1",
     "kolorist": "^1.5.0",
     "npm-run-all": "^4.1.5",
+    "prettier": "2.5.1",
     "rimraf": "^3.0.2",
     "sass": "^1.43.2",
     "ts-node": "^10.4.0",

@@ -88,7 +88,7 @@ test('Takes DOM text pages (text lines) and binds them into documents (chunks)',
 });
 
 test('breaks documents into pages', t => {
-  const documents = ["<|1:algún texto|><|2:más texto|>", "<|3:aún más texto|>"];
+  const documents = ['<|1:algún texto|><|2:más texto|>', '<|3:aún más texto|>'];
   const pages = breakDocuments(documents);
 
   t.is(pages[0], '1:algún texto');
