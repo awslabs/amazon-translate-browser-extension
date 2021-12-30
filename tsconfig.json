@@ -2,8 +2,8 @@
   "compilerOptions": {
     "allowJs": true,
     "baseUrl": ".",
-    "module": "commonjs",
     "target": "es2016",
+    "module": "commonjs",
     "lib": ["DOM", "ESNext"],
     "strict": true,
     "esModuleInterop": true,
@@ -19,5 +19,11 @@
       "~/*": ["src/*"]
     }
   },
-  "exclude": ["dist", "node_modules"]
+  "exclude": [
+    "dist",
+    "node_modules",
+    "extension",
+    "ava.config.js",
+    "copy-assets.js"
+  ]
 }
