@@ -57,7 +57,7 @@ function messageHandler() {
       const { source, target } = langs;
 
       // Send a message informing the popup that the translation has started
-      sendMessage('status', { status: 'translating', message: '' }, 'popup');
+      void sendMessage('status', { status: 'translating', message: '' }, 'popup');
 
       // Start the webpage translation process
       const startingEl = document.querySelector('body');
@@ -65,13 +65,17 @@ function messageHandler() {
       startTranslation(creds, source, target, startingEl)
         .then(() => {
           // Send a message to the popup indicating the translation has completed
-          sendMessage('status', { status: 'complete', message: 'Translation complete.' }, 'popup');
+          void sendMessage(
+            'status',
+            { status: 'complete', message: 'Translation complete.' },
+            'popup'
+          );
         })
         .catch(e => {
           console.error(e, startingEl);
 
           // Send a message to the popup indicating that an error occurred during translation
-          sendMessage(
+          void sendMessage(
             'status',
             { status: 'error', message: 'An error occurred. The document failed to translate.' },
             { context, tabId }
@@ -83,7 +87,7 @@ function messageHandler() {
   // Listen to requests to clear the current page's translation cache
   onMessage('clearCache', ({ sender: { context, tabId } }) => {
     lockr.rm(window.location.href);
-    sendMessage(
+    void sendMessage(
       'status',
       { status: 'complete', message: 'Cleared cache for this page.' },
       { context, tabId }
