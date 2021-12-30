@@ -27,5 +27,5 @@ export interface TranslateErrorData {
 
 // These types are copied from TypeFest to support web-ext interfaces
 type JsonObject = { [Key in string]?: JsonValue };
-interface JsonArray extends Array<JsonValue> {}
+type JsonArray = Array<JsonValue>;
 type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
