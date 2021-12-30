@@ -21,7 +21,7 @@ const IGNORED_NODES = ['SCRIPT', 'STYLE', 'PRE', '#comment', 'NOSCRIPT'];
 // The formatting to apply to pages before translation
 const PAGE_PATTERNIZE = (id: string, text: string) => `<|${id}:${text}|>`;
 // The pattern to split translated documents into pages
-const PAGE_PATTERN = /[(<\|)|(\|>)]/g;
+const PAGE_PATTERN = /[(<|)|(|>)]/g;
 
 /**
  * Recursively crawls the webpage starting from the specified starting node and translates
@@ -72,7 +72,7 @@ export function validNodeText(node: Node): string | null {
  *
  * Example Page: "<|1:some text|>"
  */
-export function writePages(pages: PageMap) {
+export function writePages(pages: PageMap): string[] {
   return Object.entries(pages).map(([key, text]) => PAGE_PATTERNIZE(key, text));
 }
 
@@ -171,7 +171,7 @@ function translateDocument(
   command: TranslateTextCommand,
   resolve: (value: TranslateTextCommandOutput) => void,
   reject: (reason?: any) => void,
-  attempts: number = 0
+  attempts = 0
 ) {
   setTimeout(() => {
     client
@@ -275,7 +275,7 @@ export function applyCachedTranslation(
  * Takes a node map and applies the translated documents to the DOM by parsing each
  * page and node ID then swapping the current text with the translated text.
  */
-export function applyTranslation(nodeMap: NodeMap, pages: string[]) {
+export function applyTranslation(nodeMap: NodeMap, pages: string[]): void {
   // Loop over each
   pages.forEach(page => {
     let [id, text] = page.split(':');
