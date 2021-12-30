@@ -44,7 +44,7 @@ onMessage('get-current-tab', async () => {
   try {
     const tab = await getTabId(previousTabId);
     return {
-      title: `${tab?.id}`,
+      title: `${tab?.id ?? ''}`,
     };
   } catch {
     return {
