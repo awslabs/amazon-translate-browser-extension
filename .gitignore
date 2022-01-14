@@ -1,4 +1,7 @@
 node_modules
 .DS_Store
 extension/
+# eslint cache
 .eslintcache
+# directory with releases
+release/
