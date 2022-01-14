@@ -7,9 +7,9 @@
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "release/extension.zip", "label": "Packaged Zip" },
-          { "path": "release/extension.crx", "label": "Chrome Extension" },
-          { "path": "release/extension.xpi", "label": "Firefox Extension" }
+          { "path": "release/extension.zip", "label": "extension.zip" },
+          { "path": "release/extension.crx", "label": "extension.crx (Chrome)" },
+          { "path": "release/extension.xpi", "label": "extension.xpi (Firefox)" }
         ]
       }
     ]
