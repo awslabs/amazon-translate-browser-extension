@@ -80,6 +80,8 @@ jobs:
         run: pnpm install
       - name: Run build
         run: npm run build
+      - name: Create release directory
+        run: mkdir -p ./release
       - name: Package build
         run: npm run pack
       - name: Release
