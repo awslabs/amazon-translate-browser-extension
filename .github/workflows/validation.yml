@@ -79,4 +79,4 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Run build
-        run: pnpm build
+        run: npm run build
