@@ -1,0 +1,17 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          { "path": "release/extension.zip", "label": "Packaged Zip" },
+          { "path": "release/extension.crx", "label": "Chrome Extension" },
+          { "path": "release/extension.xpi", "label": "Firefox Extension" }
+        ]
+      }
+    ]
+  ]
+}
