@@ -17,16 +17,18 @@
     "build:prepare": "esno scripts/prepare.ts",
     "build:web": "vite build",
     "build:js": "vite build --config vite.config.content.ts",
+    "prepare": "husky install",
     "prepack": "yarn assets",
     "pack": "cross-env NODE_ENV=production run-p pack:*",
-    "pack:zip": "rimraf extension.zip && jszip-cli add extension -o ./extension.zip",
-    "pack:crx": "crx pack extension -o ./extension.crx",
-    "pack:xpi": "cross-env WEB_EXT_ARTIFACTS_DIR=./ web-ext build --source-dir ./extension --filename extension.xpi --overwrite-dest",
+    "pack:zip": "rimraf extension.zip && jszip-cli",
+    "pack:crx": "crx pack extension -o ./release/extension.crx",
+    "pack:xpi": "cross-env WEB_EXT_ARTIFACTS_DIR=./release/ web-ext build --source-dir ./extension --filename extension.xpi --overwrite-dest",
     "start:chromium": "web-ext run --source-dir ./extension --target=chromium",
     "start:firefox": "web-ext run --source-dir ./extension --target=firefox-desktop",
     "test": "ava",
-    "clear": "rimraf extension/dist extension/manifest.json extension.*",
-    "lint": "eslint ./src/ --fix"
+    "clear": "rimraf extension/dist extension/manifest.json extension.* ./release/*",
+    "lint": "eslint ./src/ --fix",
+    "cm": "cz"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.9.0",
@@ -46,20 +48,25 @@
     "@vueuse/core": "^6.5.3",
     "ava": "^3.15.0",
     "chokidar": "^3.5.2",
+    "commitizen": "^4.2.4",
     "cross-env": "^7.0.3",
     "crx": "^5.0.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "esno": "^0.10.0",
     "fs-extra": "^10.0.0",
     "fs-jetpack": "^4.3.0",
+    "husky": "^7.0.4",
     "jsdom": "^18.0.1",
     "kolorist": "^1.5.0",
+    "lint-staged": "^12.1.7",
     "npm-run-all": "^4.1.5",
     "prettier": "2.5.1",
     "rimraf": "^3.0.2",
     "sass": "^1.43.2",
+    "semantic-release": "^18.0.1",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.3",
     "unplugin-auto-import": "^0.4.8",
@@ -77,5 +84,13 @@
   "dependencies": {
     "@aws-sdk/client-translate": "^3.37.0",
     "lockr": "^0.9.0-beta.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --cache-location .eslintcache --fix"
   }
 }

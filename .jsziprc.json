@@ -1,0 +1,9 @@
+{
+  "entries": [
+    "./extension/assets",
+    "./extension/dist",
+    "./extension/manifest.json"
+  ],
+  "mode": "add",
+  "outputEntry": "./release/extension.zip"
+}
