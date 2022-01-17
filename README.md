@@ -4,26 +4,32 @@ This project is a browser extension for translating web pages using Amazon Trans
 
 ![Preview](example.jpg)
 
-## Installation Steps
+## Google Play Store & Firefox Add-ons (Coming Soon)
 
-1. Navigate to the releases folder in the repository [here](https://gitlab.aws.dev/sdt-northcentral-apps/browser-extension-amazon-translate/-/tree/main/releases).
-2. Download the latest version zip file and unzip it on your machine (it will unzip to the name "extension").
+We currently are working towards making this extension available in the Google Play Store and with Firefox Add-ons. We will update this readme when they are available. In the meantime, you can use this extension by following the manual installation steps below.
+
+<!-- The easiest way to use this extension is to install the latest version from the [Google Play Store]() or from [Firefox Add-ons](). -->
+
+## Manual Installation Steps
+
+1. Navigate to the Github releases page [here](https://github.com/awslabs/amazon-translate-browser-extension/releases).
+2. Download the latest version *zip file* and unzip it on your machine (it will unzip to the name "extension").
 3. Open up the Chrome extension settings.
 4. At the top-right of the extension settings screen, click the **Developer Mode** toggle.
 5. On the developer toolbar click the **Load unpacked** button.
-6. Navigate to the clone repo on your machine and select the `extension` folder that you unzipped.
+6. Navigate on your machine to the `extension` folder that you unzipped and then select it and click open.
 7. You now have the extension installed in your browser.
 
 ## Guide
 
 To use this extension you will need to follow the steps below:
 
-1. Create a IAM user through Isengard and assign it the `TranslateReadOnly` Policy.
-2. Open the Amazont Translate Chrome Extension settings in your browser.
-3. Create an Access Key for this user for programmatic access.
+1. Create a IAM user and assign it the `TranslateReadOnly` Policy.
+2. Create an Access Key for this user for programmatic access.
+3. Open the Amazon Translate Chrome Extension settings in your browser.
 4. In the extension settings, select the region closest to you that supports the language pairs you desire to use.
-5. Copy the **Access Key ID** and paste it into the appropriate spot in the extension settings.
-6. Copy the **Secret Access Key** and paste it into the appropriate spot in the extension settings.
+5. Copy the **Access Key ID** from your IAM user access key and paste it into the appropriate spot in the extension settings.
+6. Copy the **Secret Access Key** from your IAM user access key and paste it into the appropriate spot in the extension settings.
 7. Click Save Settings.
 
 After you have done this you can now use the extension popup to translate web pages using your provided password.
