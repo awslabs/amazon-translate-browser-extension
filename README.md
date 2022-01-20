@@ -4,6 +4,10 @@ This project is a browser extension for translating web pages using Amazon Trans
 
 ![Preview](example.jpg)
 
+## What to Expect
+
+This is the first release of the Amazon Translate Browser Extension and it is still a work in progress. It is not perfect right now and bugs should be expected, however, we will be working diligently to continually improve the experience.
+
 ## Google Play Store & Firefox Add-ons (Coming Soon)
 
 We currently are working towards making this extension available in the Google Play Store and with Firefox Add-ons. We will update this readme when they are available. In the meantime, you can use this extension by following the manual installation steps below.
