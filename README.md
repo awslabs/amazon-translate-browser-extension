@@ -1,4 +1,4 @@
-# Amazon Translate Chrome Extension
+# Amazon Translate Browser Extension
 
 This project is a browser extension for translating web pages using Amazon Translate. It primarily works in Chromium based browsers but also works with Firefox. Whenever you want to translate a web page, just simply select your source (automatic by default) and target language and hit translate. Your webpage will now be translated to the target language.
 
