@@ -14,7 +14,7 @@ We currently are working towards making this extension available in the Google P
 
 <!-- The easiest way to use this extension is to install the latest version from the [Google Play Store]() or from [Firefox Add-ons](). -->
 
-## Manual Installation Steps
+## Manual Installation Steps (Chrome)
 
 1. Navigate to the Github releases page [here](https://github.com/awslabs/amazon-translate-browser-extension/releases).
 2. Download the latest version *zip file* and unzip it on your machine (it will unzip to the name "extension").
