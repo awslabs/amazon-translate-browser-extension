@@ -14,6 +14,11 @@ We currently are working towards making this extension available in the Google P
 
 <!-- The easiest way to use this extension is to install the latest version from the [Google Play Store]() or from [Firefox Add-ons](). -->
 
+## Tutorial
+
+For a detailed tutorial on setting up the plugin, please refer to the following blog post:
+[Use a Web Browser Plugin to Quickly Translate Text with Amazon Translate](https://aws.amazon.com/blogs/machine-learning/use-a-web-browser-plugin-to-quickly-translate-text-with-amazon-translate/)
+
 ## Manual Installation Steps (Chrome)
 
 1. Navigate to the Github releases page [here](https://github.com/awslabs/amazon-translate-browser-extension/releases).
