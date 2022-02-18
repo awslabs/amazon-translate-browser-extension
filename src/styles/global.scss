@@ -18,10 +18,15 @@ $awsOrangeHover: rgb(235, 95, 7);
 }
 
 .aws-form-row {
-  width: 75%;
+  width: 100%;
+
+  @media screen and (min-width: 1024px) {
+    width: 75%;
+  }
 }
 
 .aws-field {
+  box-sizing: border-box;
   display: block;
   border: 1px solid $awsGray;
   border-radius: 2px;
@@ -30,6 +35,10 @@ $awsOrangeHover: rgb(235, 95, 7);
   padding: 4px 10px;
   width: 100%;
   color: $awsBlack;
+}
+
+select.aws-field {
+  padding: 6px 10px;
 }
 
 .aws-input {
@@ -79,6 +88,10 @@ $awsOrangeHover: rgb(235, 95, 7);
 
   > div {
     margin: 15px 0;
+  }
+
+  &.popup > div {
+    margin: 5px 0;
   }
 }
 
