@@ -3,7 +3,7 @@
   SPDX-License-Identifier: Apache-2.0
 -->
 <template>
-  <main class="w-[300px] px-4 py-5 text-center text-gray-700">
+  <main class="popup-container">
     <!-- <Logo /> -->
     <h1 class="text-lg">Amazon Translate</h1>
     <p>Select your source and target languages.</p>
@@ -17,25 +17,29 @@
       {{ message }}
     </div>
 
-    <form>
-      <select v-model="form.sourceLang" class="px-8 py-2 my-2">
-        <option v-for="lang in languages" :key="lang.code" :value="lang.code">
-          {{ lang.label }}
-        </option>
-      </select>
+    <form class="form-container popup">
+      <div>
+        <select v-model="form.sourceLang" class="aws-field">
+          <option v-for="lang in languages" :key="lang.code" :value="lang.code">
+            {{ lang.label }}
+          </option>
+        </select>
+      </div>
 
-      <select v-model="form.targetLang" class="px-8 py-2 my-2">
-        <option
-          v-for="lang in languages"
-          :key="lang.code"
-          :value="lang.code"
-          :selected="lang.default"
-        >
-          {{ lang.label }}
-        </option>
-      </select>
+      <div>
+        <select v-model="form.targetLang" class="aws-field">
+          <option
+            v-for="lang in languages"
+            :key="lang.code"
+            :value="lang.code"
+            :selected="lang.default"
+          >
+            {{ lang.label }}
+          </option>
+        </select>
+      </div>
 
-      <button class="aws-btn my-2" :disabled="status === 'translating'" @click="translatePage">
+      <button class="aws-btn" :disabled="status === 'translating'" @click="translatePage">
         <span v-if="status === 'translating'">
           <Spinner />
         </span>
@@ -43,8 +47,8 @@
       </button>
     </form>
 
-    <div class="mt-2">
-      <a @click="openOptionsPage" href="#">Extension Settings</a><br /><br />
+    <div class="links">
+      <a @click="openOptionsPage" href="#">Extension Settings</a>
       <template v-if="cachingEnabled">
         <a @click="clearPageCache" href="#">Clear Cache for this Page</a>
       </template>
@@ -168,16 +172,24 @@
 <style lang="scss">
   @import '../styles/global.scss';
 
+  .popup-container {
+    width: 280px;
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(55, 65, 81, 1);
+  }
+
   h1 {
     font-size: 16px;
     font-weight: bold;
   }
 
-  select {
-    display: inline-block;
-    padding: 4px 15px;
-    border: 1px solid $awsGray;
-    border-radius: 2px;
+  .links {
+    a {
+      display: inline-block;
+      margin-bottom: 15px;
+    }
   }
 
   .password-input {
