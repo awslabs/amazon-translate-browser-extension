@@ -3,22 +3,31 @@
   SPDX-License-Identifier: Apache-2.0
 -->
 <script lang="ts">
-  import * as lockr from 'lockr';
+  import AwsButton from '../components/AwsButton.vue';
+  import ShowButton from '../components/ShowButton.vue';
+  import { lockr } from '../modules';
   import regionData from './regions.json';
-
-  lockr.setPrefix('amazonTranslate_');
+  import { AwsOptions, ExtensionOptions, languages } from '~/constants';
 
   export default defineComponent({
+    components: {
+      AwsButton,
+      ShowButton,
+    },
     data() {
       return {
         regions: regionData.regions,
         hasError: false,
         message: '',
+        languages,
+        showAccessKeyId: false,
+        showSecretAccessKey: false,
         configuration: {
           awsRegion: '',
           awsAccessKeyId: '',
           awsSecretAccessKey: '',
           password: '',
+          defaultTargetLang: 'en',
           cachingEnabled: true,
         },
       };
@@ -30,22 +39,24 @@
        */
       saveSettings() {
         // Get the values
-        const { awsRegion, awsAccessKeyId, awsSecretAccessKey, cachingEnabled } =
+        const { awsRegion, awsAccessKeyId, awsSecretAccessKey, defaultTargetLang, cachingEnabled } =
           this.configuration;
 
         // Validate that the values are all set
         if (awsRegion !== '' && awsAccessKeyId !== '' && awsSecretAccessKey !== '') {
-          lockr.set('awsRegion', awsRegion);
-          lockr.set('awsAccessKeyId', awsAccessKeyId);
-          lockr.set('awsSecretAccessKey', awsSecretAccessKey);
-          lockr.set('cachingEnabled', cachingEnabled);
+          lockr.set(AwsOptions.AWS_REGION, awsRegion);
+          lockr.set(AwsOptions.AWS_ACCESS_KEY_ID, awsAccessKeyId);
+          lockr.set(AwsOptions.AWS_SECRET_ACCESS_KEY, awsSecretAccessKey);
+          lockr.set(ExtensionOptions.DEFAULT_TARGET_LANG, defaultTargetLang);
+          lockr.set(ExtensionOptions.CACHING_ENABLED, cachingEnabled);
 
-          // Inform the user that the save was successful
+          // Notify the user that the save was successful
           this.hasError = false;
           this.message = 'Successfully saved your settings.';
         } else {
+          // Notify the user that the save failed because required fields are blank
           this.hasError = true;
-          this.message = 'All fields are required in order to save the settings.';
+          this.message = 'The AWS Region, AWS Access Key ID, and AWS Secret Access Key are required.';
         }
       },
     },
@@ -55,6 +66,7 @@
       this.configuration.awsRegion = lockr.get('awsRegion', '');
       this.configuration.awsAccessKeyId = lockr.get('awsAccessKeyId', '');
       this.configuration.awsSecretAccessKey = lockr.get('awsSecretAccessKey', '');
+      this.configuration.defaultTargetLang = lockr.get('defaultTargetLang', 'en');
       this.configuration.cachingEnabled = lockr.get('cachingEnabled', true);
     },
   });
@@ -67,6 +79,7 @@
     </div>
 
     <div class="form-container">
+
       <div v-if="message !== ''" class="form-message" :class="{ hasError }">
         {{ message }}
       </div>
@@ -81,7 +94,7 @@
 
       <div class="aws-form-row">
         <label for="aws-region">AWS Region*</label>
-        <select id="aws-region" class="aws-field" v-model="configuration.awsRegion">
+        <select id="aws-region" class="aws-field" v-model="configuration.awsRegion" :class="{ error: hasError && !configuration.awsRegion }">
           <option v-for="(name, value) in regions" :value="value" :selected="value === 'us-east-1'">
             {{ name }}
           </option>
@@ -90,16 +103,54 @@
 
       <div class="aws-form-row">
         <label for="aws-access-key-id">AWS Access Key ID*</label>
-        <input v-model="configuration.awsAccessKeyId" id="aws-access-key-id" class="aws-field" />
+        <div class="with-show-container">
+          <div class="input-container">
+            <input
+              v-model="configuration.awsAccessKeyId"
+              id="aws-access-key-id"
+              :type="showAccessKeyId ? 'text' : 'password'"
+              class="aws-field"
+              :class="{ error: hasError && !configuration.awsAccessKeyId }"
+            />
+          </div>
+          <div class="show-container">
+            <show-button @show="showAccessKeyId = !showAccessKeyId" />
+          </div>
+        </div>
+
       </div>
 
       <div class="aws-form-row">
         <label for="aws-secret-access-key">AWS Secret Access Key*</label>
-        <input
-          v-model="configuration.awsSecretAccessKey"
-          id="aws-secret-access-key"
-          class="aws-field"
-        />
+        <div class="with-show-container">
+          <div class="input-container">
+            <input
+              v-model="configuration.awsSecretAccessKey"
+              id="aws-secret-access-key"
+              :type="showSecretAccessKey ? 'text' : 'password'"
+              class="aws-field"
+              :class="{ error: hasError && !configuration.awsSecretAccessKey }"
+            />
+          </div>
+          <div class="show-container">
+            <show-button @show="showSecretAccessKey = !showSecretAccessKey" />
+          </div>
+        </div>
+      </div>
+
+      <div class="aws-form-row">
+        <label for="aws-region">Default Target Language</label>
+        <p>Set the language you would like to translate to by default.</p>
+        <select v-model="configuration.defaultTargetLang" class="aws-field">
+          <option
+            v-for="lang in languages"
+            :key="lang.code"
+            :value="lang.code"
+            :selected="lang.default"
+          >
+            {{ lang.label }}
+          </option>
+        </select>
       </div>
 
       <div class="aws-form-row">
@@ -121,7 +172,7 @@
       </div>
 
       <div class="aws-form-row">
-        <button class="aws-btn" @click="saveSettings">Save Settings</button>
+        <aws-button class="aws-btn" @click="saveSettings" variant="attention">Save Settings</aws-button>
       </div>
     </div>
   </main>
@@ -139,7 +190,16 @@
     }
   }
 
-  label {
-    font-weight: bold;
+  .with-show-container {
+    display: flex;
+    gap: 15px;
+
+    .input-container {
+      flex: 1 1 auto;
+    }
+
+    .show-container {
+      flex: 0 1 auto;
+    }
   }
 </style>

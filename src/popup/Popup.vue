@@ -2,73 +2,20 @@
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
   SPDX-License-Identifier: Apache-2.0
 -->
-<template>
-  <main class="popup-container">
-    <!-- <Logo /> -->
-    <h1 class="text-lg">Amazon Translate</h1>
-    <p>Select your source and target languages.</p>
-
-    <div
-      v-if="status !== '' && status !== 'translating'"
-      class="form-message text-left"
-      :class="{ hasError: status === 'error' }"
-      style="max-width: 245px; margin: auto"
-    >
-      {{ message }}
-    </div>
-
-    <form class="form-container popup">
-      <div>
-        <select v-model="form.sourceLang" class="aws-field">
-          <option v-for="lang in languages" :key="lang.code" :value="lang.code">
-            {{ lang.label }}
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <select v-model="form.targetLang" class="aws-field">
-          <option
-            v-for="lang in languages"
-            :key="lang.code"
-            :value="lang.code"
-            :selected="lang.default"
-          >
-            {{ lang.label }}
-          </option>
-        </select>
-      </div>
-
-      <button class="aws-btn" :disabled="status === 'translating'" @click="translatePage">
-        <span v-if="status === 'translating'">
-          <Spinner />
-        </span>
-        {{ status === 'translating' ? 'Translating...' : 'Translate' }}
-      </button>
-    </form>
-
-    <div class="links">
-      <a @click="openOptionsPage" href="#">Extension Settings</a>
-      <template v-if="cachingEnabled">
-        <a @click="clearPageCache" href="#">Clear Cache for this Page</a>
-      </template>
-    </div>
-  </main>
-</template>
-
 <script lang="ts">
   import { TranslateClientConfig } from '@aws-sdk/client-translate';
   import { onMessage, sendMessage } from 'webext-bridge';
-  import * as lockr from 'lockr';
   import Spinner from './Spinner.vue';
-  import { languages, getCurrentTabId } from '../util';
+  import AwsButton from '../components/AwsButton.vue';
+  import { lockr } from '../modules';
+  import { getCurrentTabId } from '../util';
+  import { AwsOptions, ExtensionOptions, languages } from '~/constants';
   import { TranslateStatusData } from '../_contracts';
-
-  lockr.setPrefix('amazonTranslate_');
 
   export default defineComponent({
     components: {
       Spinner,
+      AwsButton,
     },
     data() {
       return {
@@ -86,10 +33,11 @@
       };
     },
     mounted() {
-      this.region = lockr.get('awsRegion', '');
-      this.accessKeyId = lockr.get('awsAccessKeyId', '');
-      this.secretAccessKey = lockr.get('awsSecretAccessKey', '');
-      this.cachingEnabled = lockr.get('cachingEnabled', false);
+      this.region = lockr.get(AwsOptions.AWS_REGION, '');
+      this.accessKeyId = lockr.get(AwsOptions.AWS_ACCESS_KEY_ID, '');
+      this.secretAccessKey = lockr.get(AwsOptions.AWS_SECRET_ACCESS_KEY, '');
+      this.form.targetLang = lockr.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en');
+      this.cachingEnabled = lockr.get(ExtensionOptions.CACHING_ENABLED, false);
 
       onMessage('status', async ({ data: _data }) => {
         const data = _data as unknown;
@@ -169,6 +117,67 @@
   });
 </script>
 
+<template>
+  <main class="popup-container">
+    <!-- <Logo /> -->
+    <h1 class="text-lg">Amazon Translate</h1>
+    <p>Select your source and target languages.</p>
+
+    <div
+      v-if="status !== '' && status !== 'translating'"
+      class="form-message text-left"
+      :class="{ hasError: status === 'error' }"
+      style="max-width: 245px; margin: auto"
+    >
+      {{ message }}
+    </div>
+
+    <form class="form-container popup">
+      <div>
+        <select v-model="form.sourceLang" class="aws-field">
+          <option v-for="lang in languages" :key="lang.code" :value="lang.code">
+            {{ lang.label }}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <select v-model="form.targetLang" class="aws-field">
+          <option
+            v-for="lang in languages"
+            :key="lang.code"
+            :value="lang.code"
+            :selected="lang.default"
+          >
+            {{ lang.label }}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <aws-button
+          class="submit-button"
+          variant="attention"
+          :disabled="status === 'translating'"
+          @click="translatePage"
+        >
+          <span v-if="status === 'translating'">
+            <Spinner />
+          </span>
+          {{ status === 'translating' ? 'Translating...' : 'Translate' }}
+        </aws-button>
+      </div>
+    </form>
+
+    <div class="links">
+      <a @click="openOptionsPage" href="#">Extension Settings</a>
+      <template v-if="cachingEnabled">
+        <a @click="clearPageCache" href="#">Clear Cache for this Page</a>
+      </template>
+    </div>
+  </main>
+</template>
+
 <style lang="scss">
   @import '../styles/global.scss';
 
@@ -188,7 +197,7 @@
   .links {
     a {
       display: inline-block;
-      margin-bottom: 15px;
+      margin-top: 10px;
     }
   }
 
@@ -196,5 +205,18 @@
     text-align: left;
     max-width: 245px;
     margin: auto;
+  }
+
+  .form-container {
+    &.popup {
+      padding: 0px;
+      > div {
+        margin: 5px 0;
+      }
+    }
+  }
+
+  .submit-button {
+    width: 100%;
   }
 </style>
