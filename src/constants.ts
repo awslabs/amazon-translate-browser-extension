@@ -1,3 +1,12 @@
+/**
+  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  SPDX-License-Identifier: Apache-2.0
+*/
+export const LOCKR_PREFIX = 'amazonTranslate_';
+
+/**
+ * Array of objects representing the languages that are supported by Amazon Translate.
+ */
 export const languages = [
   {
     label: 'Auto (auto)',
@@ -289,3 +298,20 @@ export const languages = [
     code: 'cy',
   },
 ];
+
+/**
+ * Local storage keys for AWS credentials.
+ */
+export enum AwsOptions {
+  AWS_REGION = 'awsRegion',
+  AWS_ACCESS_KEY_ID = 'awsAccessKeyId',
+  AWS_SECRET_ACCESS_KEY = 'awsSecretAccessKey',
+}
+
+/**
+ * Local storage keys for extension options.
+ */
+export enum ExtensionOptions {
+  CACHING_ENABLED = 'cachingEnabled',
+  DEFAULT_TARGET_LANG = 'defaultTargetLang',
+}
