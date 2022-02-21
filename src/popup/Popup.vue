@@ -15,6 +15,7 @@
   export default defineComponent({
     components: {
       Spinner,
+      AwsButton,
     },
     data() {
       return {
@@ -154,7 +155,12 @@
       </div>
 
       <div>
-        <aws-button variant="attention" :disabled="status === 'translating'" @click="translatePage">
+        <aws-button
+          class="submit-button"
+          variant="attention"
+          :disabled="status === 'translating'"
+          @click="translatePage"
+        >
           <span v-if="status === 'translating'">
             <Spinner />
           </span>
@@ -191,7 +197,7 @@
   .links {
     a {
       display: inline-block;
-      margin-bottom: 15px;
+      margin-top: 10px;
     }
   }
 
@@ -199,5 +205,18 @@
     text-align: left;
     max-width: 245px;
     margin: auto;
+  }
+
+  .form-container {
+    &.popup {
+      padding: 0px;
+      > div {
+        margin: 5px 0;
+      }
+    }
+  }
+
+  .submit-button {
+    width: 100%;
   }
 </style>
