@@ -5,3 +5,4 @@ extension/
 .eslintcache
 # directory with releases
 release/
+test/data/private
