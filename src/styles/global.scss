@@ -1,24 +1,28 @@
-$awsBg: rgb(242, 243, 243);
-$awsGray: rgb(170, 183, 184);
-$awsBlack: rgb(22, 25, 31);
-$awsOrange: rgb(236, 114, 17);
-$awsOrangeHover: rgb(235, 95, 7);
+@use './colors';
+
+body {
+  font-size: 14px;
+}
 
 .aws-container {
   margin: 50px auto;
-  box-shadow: 0 1px 1px 0 var(--awsui-color-shadow-medium, rgba(0, 28, 36, 0.3)),
-    1px 1px 1px 0 var(--awsui-color-shadow-side, rgba(0, 28, 36, 0.15)),
-    -1px 1px 1px 0 var(--awsui-color-shadow-side, rgba(0, 28, 36, 0.15));
+  box-shadow: 0 1px 1px 0 colors.$awsui-color-shadow-medium,
+    1px 1px 1px 0 colors.$awsui-color-shadow-side,
+    -1px 1px 1px 0 colors.$awsui-color-shadow-side
 }
 
 .aws-label {
   font-size: 14px;
   line-height: 20px;
-  color: $awsBlack;
+  color: colors.$awsui-color-grey-900;
 }
 
 .aws-form-row {
   width: 100%;
+
+  label {
+    font-weight: bold;
+  }
 
   @media screen and (min-width: 1024px) {
     width: 75%;
@@ -28,13 +32,18 @@ $awsOrangeHover: rgb(235, 95, 7);
 .aws-field {
   box-sizing: border-box;
   display: block;
-  border: 1px solid $awsGray;
+  border: 1px solid colors.$awsui-color-grey-400;
   border-radius: 2px;
   font-size: 14px;
   line-height: 20px;
   padding: 4px 10px;
   width: 100%;
-  color: $awsBlack;
+  color: colors.$awsui-color-grey-900;
+
+  &.error {
+    border-color: darken(#e5b7b7, 15%);
+    border-width: 2px;
+  }
 }
 
 select.aws-field {
@@ -42,32 +51,13 @@ select.aws-field {
 }
 
 .aws-input {
-  border: 1px solid $awsGray;
+  border: 1px solid colors.$awsui-color-grey-400;
   border-radius: 2px;
   font-size: 14px;
   line-height: 20px;
   padding: 4px 10px;
   width: 100%;
-  color: $awsBlack;
-}
-
-.aws-btn {
-  background-color: $awsOrange;
-  border-radius: 2px;
-  color: #fff;
-  font-family: 'Helvetica Neue', arial;
-  font-weight: bold;
-  font-size: 14px;
-  padding: 4px 40px;
-
-  &:hover,
-  &:active {
-    background-color: $awsOrangeHover;
-  }
-
-  &[disabled] {
-    background-color: $awsGray;
-  }
+  color: colors.$awsui-color-grey-900;
 }
 
 .form-header {
@@ -75,9 +65,9 @@ select.aws-field {
   font-size: 18px;
   font-weight: bold;
   line-height: 20px;
-  color: $awsBlack;
-  background-color: var(--awsui-color-background-container-header, #fafafa);
-  border-bottom: 1px solid var(--awsui-color-border-divider-default, #eaeded);
+  color: colors.$awsui-color-grey-900;
+  background-color: colors.$awsui-color-background-container-header;
+  border-bottom: 1px solid colors.$awsui-color-border-divider;
 }
 
 .form-container {
@@ -88,10 +78,6 @@ select.aws-field {
 
   > div {
     margin: 15px 0;
-  }
-
-  &.popup > div {
-    margin: 5px 0;
   }
 }
 
@@ -104,9 +90,13 @@ select.aws-field {
   font-size: 14px;
 
   &:not(.hasError) {
-    background-color: #bce5b7;
-    border-color: darken(#bce5b7, 15%);
-    color: darken(#bce5b7, 55%);
+    background-color: colors.$awsui-color-background-alert-success;
+    border-color: colors.$awsui-color-background-flash-success;
+
+    h2 {
+      font-weight: normal;
+      color: colors.$awsui-color-background-flash-success;
+    }
   }
 
   &.hasError {

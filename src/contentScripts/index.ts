@@ -18,8 +18,8 @@ limitations under the License.
 
 import { TranslateClientConfig } from '@aws-sdk/client-translate';
 import { onMessage, sendMessage } from 'webext-bridge';
-import * as lockr from 'lockr';
 import { TranslateCommandData } from '../_contracts';
+import { lockr } from '../modules';
 import {
   crawl,
   getCache,
@@ -33,9 +33,6 @@ import {
   cacheTranslation,
   applyTranslation,
 } from './functions';
-
-// Set our localStorage prefix
-lockr.setPrefix('amazonTranslate_');
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
 (() => {

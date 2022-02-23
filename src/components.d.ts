@@ -4,10 +4,12 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AwsButton: typeof import('./components/AwsButton.vue')['default'];
     Logo: typeof import('./components/Logo.vue')['default'];
     PixelarticonsPower: typeof import('~icons/pixelarticons/power')['default'];
     PixelarticonsSliders: typeof import('~icons/pixelarticons/sliders')['default'];
     PixelarticonsZap: typeof import('~icons/pixelarticons/zap')['default'];
+    ShowButton: typeof import('./components/ShowButton.vue')['default'];
   }
 }
 
