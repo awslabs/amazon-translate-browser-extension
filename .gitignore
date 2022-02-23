@@ -6,3 +6,5 @@ extension/
 # directory with releases
 release/
 test/data/private
+src/assets/logo.svg
+src/assets/logo.png

@@ -10,6 +10,7 @@ declare module 'vue' {
     PixelarticonsSliders: typeof import('~icons/pixelarticons/sliders')['default'];
     PixelarticonsZap: typeof import('~icons/pixelarticons/zap')['default'];
     ShowButton: typeof import('./components/ShowButton.vue')['default'];
+    Spinner: typeof import('./components/Spinner.vue')['default'];
   }
 }
 
