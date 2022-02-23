@@ -5,18 +5,12 @@
 <script lang="ts">
   import { TranslateClientConfig } from '@aws-sdk/client-translate';
   import { onMessage, sendMessage } from 'webext-bridge';
-  import Spinner from './Spinner.vue';
-  import AwsButton from '../components/AwsButton.vue';
   import { lockr } from '../modules';
   import { getCurrentTabId } from '../util';
   import { AwsOptions, ExtensionOptions, languages } from '~/constants';
   import { TranslateStatusData } from '../_contracts';
 
   export default defineComponent({
-    components: {
-      Spinner,
-      AwsButton,
-    },
     data() {
       return {
         status: '',
@@ -120,7 +114,7 @@
 <template>
   <main class="popup-container">
     <!-- <Logo /> -->
-    <h1 class="text-lg">Amazon Translate</h1>
+    <h1 class="header">Amazon Translate</h1>
     <p>Select your source and target languages.</p>
 
     <div
@@ -189,8 +183,8 @@
     color: rgba(55, 65, 81, 1);
   }
 
-  h1 {
-    font-size: 16px;
+  .header {
+    font-size: 18px;
     font-weight: bold;
   }
 

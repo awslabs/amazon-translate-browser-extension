@@ -90,6 +90,10 @@
           secretAccessKey from an IAM user with a sufficient policy.
         </li>
         <li>Select a region nearest to you that supports the language pairs you need.</li>
+        <li>
+          For more detailed information about setting up this extension, refer to the following AWS Blog post:
+          <a href="https://aws.amazon.com/blogs/machine-learning/use-a-web-browser-plugin-to-quickly-translate-text-with-amazon-translate/">Use a web browser plugin to quickly translate text with Amazon Translate</a>
+        </li>
       </ul>
 
       <div class="aws-form-row">

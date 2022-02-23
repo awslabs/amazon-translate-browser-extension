@@ -7,6 +7,7 @@ import Components from 'unplugin-vue-components/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import WindiCSS from 'vite-plugin-windicss';
 import windiConfig from './windi.config';
+import svgLoader from 'vite-svg-loader';
 import { r, port, isDev } from './scripts/utils';
 
 export const sharedConfig: UserConfig = {
@@ -21,6 +22,8 @@ export const sharedConfig: UserConfig = {
   },
   plugins: [
     Vue(),
+
+    svgLoader(),
 
     AutoImport({
       imports: [
