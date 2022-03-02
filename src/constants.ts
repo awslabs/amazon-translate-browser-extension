@@ -87,7 +87,6 @@ export const languages = [
   {
     label: 'English (en)',
     code: 'en',
-    default: true,
   },
   {
     label: 'Estonian (et)',
@@ -313,5 +312,6 @@ export enum AwsOptions {
  */
 export enum ExtensionOptions {
   CACHING_ENABLED = 'cachingEnabled',
+  DEFAULT_SOURCE_LANG = 'defaultSourceLang',
   DEFAULT_TARGET_LANG = 'defaultTargetLang',
 }
