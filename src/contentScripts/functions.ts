@@ -1,3 +1,7 @@
+/**
+  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  SPDX-License-Identifier: Apache-2.0
+*/
 import {
   TranslateClient,
   TranslateTextCommand,
@@ -288,4 +292,35 @@ export function applyTranslation(nodeMap: NodeMap, pages: string[]): void {
       node.textContent = text;
     }
   });
+}
+
+/**
+ * Creates an overlay that indicates the page is current translating.
+ */
+export function createOverlay(): void {
+  const body = document.querySelector('body');
+
+  const container = document.createElement('div');
+  container.id = 'amazon-translate-overlay';
+  container.innerText = 'Translating...';
+  container.style.position = 'fixed';
+  container.style.bottom = '0';
+  container.style.left = '0';
+  container.style.zIndex = '1000000000';
+  container.style.padding = '5px';
+  container.style.color = '#ffffff';
+  container.style.fontSize = '16px';
+  container.style.fontWeight = 'bold';
+  container.style.fontFamily = 'Arial';
+  container.style.backgroundColor = '#dd6b10';
+
+  body?.appendChild(container);
+}
+
+/**
+ * Destroys the translating indicator.
+ */
+export function destroyOverlay(): void {
+  const overlay = document.querySelector('#amazon-translate-overlay');
+  overlay?.parentNode?.removeChild(overlay);
 }

@@ -13,6 +13,15 @@ export async function getManifest(): Promise<Manifest.WebExtensionManifest> {
     name: pkg.displayName || pkg.name,
     version: pkg.version,
     description: pkg.description,
+    commands: {
+      // @ts-expect-error The current type system doesn't understand the command API.
+      translate: {
+        suggested_key: {
+          default: 'Alt+Shift+T',
+        },
+        description: 'Translate the webpage with your default source language and target language.',
+      },
+    },
     browser_action: {
       default_icon: './assets/logo.png',
       default_popup: './dist/popup/index.html',

@@ -1,5 +1,25 @@
+/* eslint-disable no-console */
+
+/*
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License").
+You may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 import { sendMessage, onMessage } from 'webext-bridge';
 import { Tabs } from 'webextension-polyfill';
+import { getCurrentTabId } from '../util';
+import { lockr } from '../modules';
+import { AwsOptions, ExtensionOptions } from '~/constants';
 
 // @ts-ignore only on dev mode
 if (import.meta.hot) {
@@ -10,11 +30,57 @@ if (import.meta.hot) {
 }
 
 browser.runtime.onInstalled.addListener((): void => {
-  // eslint-disable-next-line no-console
-  console.log('Extension installed');
+  console.info('Extension installed');
+  translateHotKeyHandler();
 });
 
 let previousTabId = 0;
+
+/**
+ * Listens for keyboard keypress events and looks for the combination of cmd+alt+t for Mac systems
+ * and ctrl+alt+t for Windows systems.
+ */
+function translateHotKeyHandler() {
+  browser.commands.onCommand.addListener(command => {
+    void (async () => {
+      if (command === 'translate') {
+        console.info('Hotkey has triggered a translation.');
+        const tabId = await getCurrentTabId();
+
+        const message = {
+          creds: {
+            region: lockr.get(AwsOptions.AWS_REGION, ''),
+            credentials: {
+              accessKeyId: lockr.get(AwsOptions.AWS_ACCESS_KEY_ID, ''),
+              secretAccessKey: lockr.get(AwsOptions.AWS_SECRET_ACCESS_KEY, ''),
+            },
+          },
+          langs: {
+            source: lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto'),
+            target: lockr.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en'),
+          },
+          tabId,
+          cachingEnabled: lockr.get(ExtensionOptions.CACHING_ENABLED, false),
+        };
+
+        void sendMessage('translate', message, {
+          context: 'content-script',
+          tabId,
+        });
+      }
+    })();
+  });
+  // document.addEventListener('keydown', (event) => {
+  //   // If cmd+alt+t is being held (Mac)
+  //   if (event.metaKey && event.altKey && event.key === 't') {
+  //     console.log('Holding CMD+ALT+T !!!!');
+  //   }
+  //   // If cmd+alt+t is being held (Non-Mac)
+  //   if (event.ctrlKey && event.altKey && event.key === 't') {
+  //     console.log('Holding CTRL+ALT+T !!!!');
+  //   }
+  // });
+}
 
 // communication example: send previous tab title from background page
 // see shim.d.ts for type declaration
@@ -27,8 +93,7 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
   getTabId(previousTabId)
     .then(tab => {
       previousTabId = tabId;
-      // eslint-disable-next-line no-console
-      console.log('previous tab', tab);
+      console.info('previous tab', tab);
       void sendMessage('tab-prev', { title: tab.title }, { context: 'content-script', tabId });
     })
     .catch(() => {
