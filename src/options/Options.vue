@@ -3,17 +3,11 @@
   SPDX-License-Identifier: Apache-2.0
 -->
 <script lang="ts">
-  import AwsButton from '../components/AwsButton.vue';
-  import ShowButton from '../components/ShowButton.vue';
   import { lockr } from '../modules';
   import regionData from './regions.json';
   import { AwsOptions, ExtensionOptions, languages } from '~/constants';
 
   export default defineComponent({
-    components: {
-      AwsButton,
-      ShowButton,
-    },
     data() {
       return {
         regions: regionData.regions,
@@ -27,6 +21,7 @@
           awsAccessKeyId: '',
           awsSecretAccessKey: '',
           password: '',
+          defaultSourceLang: 'auto',
           defaultTargetLang: 'en',
           cachingEnabled: true,
         },
@@ -39,14 +34,21 @@
        */
       saveSettings() {
         // Get the values
-        const { awsRegion, awsAccessKeyId, awsSecretAccessKey, defaultTargetLang, cachingEnabled } =
-          this.configuration;
+        const {
+          awsRegion,
+          awsAccessKeyId,
+          awsSecretAccessKey,
+          defaultSourceLang,
+          defaultTargetLang,
+          cachingEnabled,
+        } = this.configuration;
 
         // Validate that the values are all set
         if (awsRegion !== '' && awsAccessKeyId !== '' && awsSecretAccessKey !== '') {
           lockr.set(AwsOptions.AWS_REGION, awsRegion);
           lockr.set(AwsOptions.AWS_ACCESS_KEY_ID, awsAccessKeyId);
           lockr.set(AwsOptions.AWS_SECRET_ACCESS_KEY, awsSecretAccessKey);
+          lockr.set(ExtensionOptions.DEFAULT_SOURCE_LANG, defaultSourceLang);
           lockr.set(ExtensionOptions.DEFAULT_TARGET_LANG, defaultTargetLang);
           lockr.set(ExtensionOptions.CACHING_ENABLED, cachingEnabled);
 
@@ -63,11 +65,12 @@
     async mounted() {
       this.hasError = false;
       this.message = '';
-      this.configuration.awsRegion = lockr.get('awsRegion', '');
-      this.configuration.awsAccessKeyId = lockr.get('awsAccessKeyId', '');
-      this.configuration.awsSecretAccessKey = lockr.get('awsSecretAccessKey', '');
-      this.configuration.defaultTargetLang = lockr.get('defaultTargetLang', 'en');
-      this.configuration.cachingEnabled = lockr.get('cachingEnabled', true);
+      this.configuration.awsRegion = lockr.get(AwsOptions.AWS_REGION, '');
+      this.configuration.awsAccessKeyId = lockr.get(AwsOptions.AWS_ACCESS_KEY_ID, '');
+      this.configuration.awsSecretAccessKey = lockr.get(AwsOptions.AWS_SECRET_ACCESS_KEY, '');
+      this.configuration.defaultSourceLang = lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto');
+      this.configuration.defaultTargetLang = lockr.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en');
+      this.configuration.cachingEnabled = lockr.get(ExtensionOptions.CACHING_ENABLED, true);
     },
   });
 </script>
@@ -143,17 +146,34 @@
       </div>
 
       <div class="aws-form-row">
-        <label for="aws-region">Default Target Language</label>
-        <p>Set the language you would like to translate to by default.</p>
-        <select v-model="configuration.defaultTargetLang" class="aws-field">
+        <label for="aws-region">Default Source Language</label>
+        <p>Set the language you would like to translate from by default.</p>
+        <select v-model="configuration.defaultSourceLang" class="aws-field">
           <option
             v-for="lang in languages"
             :key="lang.code"
             :value="lang.code"
-            :selected="lang.default"
+            :selected="lang.code === configuration.defaultSourceLang"
           >
             {{ lang.label }}
           </option>
+        </select>
+      </div>
+
+      <div class="aws-form-row">
+        <label for="aws-region">Default Target Language</label>
+        <p>Set the language you would like to translate to by default.</p>
+        <select v-model="configuration.defaultTargetLang" class="aws-field">
+          <template v-for="lang in languages">
+            <option
+              v-if="lang.code !== 'auto'"
+              :key="lang.code"
+              :value="lang.code"
+              :selected="lang.code === configuration.defaultTargetLang"
+            >
+              {{ lang.label }}
+            </option>
+          </template>
         </select>
       </div>
 

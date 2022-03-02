@@ -30,6 +30,7 @@
       this.region = lockr.get(AwsOptions.AWS_REGION, '');
       this.accessKeyId = lockr.get(AwsOptions.AWS_ACCESS_KEY_ID, '');
       this.secretAccessKey = lockr.get(AwsOptions.AWS_SECRET_ACCESS_KEY, '');
+      this.form.sourceLang = lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto');
       this.form.targetLang = lockr.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en');
       this.cachingEnabled = lockr.get(ExtensionOptions.CACHING_ENABLED, false);
 
