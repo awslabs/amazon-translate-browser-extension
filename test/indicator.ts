@@ -38,5 +38,5 @@ test.serial('destroys the translating indicator overlay', t => {
   destroyOverlay();
 
   const overlay = document.querySelector<HTMLDivElement>('#amazon-translate-overlay');
-  t.is(overlay, undefined);
+  t.is(overlay, null);
 });
