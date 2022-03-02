@@ -142,7 +142,6 @@
             v-for="lang in languages"
             :key="lang.code"
             :value="lang.code"
-            :selected="lang.default"
           >
             {{ lang.label }}
           </option>

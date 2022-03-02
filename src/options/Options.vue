@@ -97,6 +97,9 @@
           For more detailed information about setting up this extension, refer to the following AWS Blog post:
           <a href="https://aws.amazon.com/blogs/machine-learning/use-a-web-browser-plugin-to-quickly-translate-text-with-amazon-translate/">Use a web browser plugin to quickly translate text with Amazon Translate</a>
         </li>
+        <li>
+          <strong>Hint:</strong> You can translate a page with your default source language and target language by pressing the keys <em>Alt + Shift + T</em>.
+        </li>
       </ul>
 
       <div class="aws-form-row">

@@ -1,3 +1,7 @@
+/**
+  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  SPDX-License-Identifier: Apache-2.0
+*/
 import test from 'ava';
 import {
   crawl,
@@ -7,14 +11,7 @@ import {
   writePages,
   bindPages,
 } from '../src/contentScripts/functions';
-import {
-  DOM,
-  DOM_WITH_EMPTY,
-  DOM_EL_POPULATED,
-  DOM_EL_EMPTY,
-  pageMap,
-  // nodeMap,
-} from './data';
+import { DOM, DOM_WITH_EMPTY, DOM_EL_POPULATED, DOM_EL_EMPTY, pageMap } from './data';
 
 test.before(() => {
   global.Blob = DOM.window.Blob;

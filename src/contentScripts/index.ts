@@ -32,20 +32,23 @@ import {
   makeCacheTextMap,
   cacheTranslation,
   applyTranslation,
+  createOverlay,
+  destroyOverlay,
 } from './functions';
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
 (() => {
-  // Setup the message handler to begin translation when a translate message is received
-  // from the popup window
-  messageHandler();
+  // Setup message handlers. These handlers receive messages from the popup window.
+  translateHandler();
+  clearCacheHandler();
+  tabPrevHandler();
 })();
 
 /**
- * Listen for messages from the popup window that contain the unencrypted creds and selected
+ * Listen for messages from the popup window that contain the AWS creds and selected
  * languages for translation.
  */
-function messageHandler() {
+function translateHandler() {
   onMessage<TranslateCommandData, 'translate'>(
     'translate',
     ({ sender: { context, tabId }, data }) => {
@@ -53,12 +56,16 @@ function messageHandler() {
       const { creds, langs } = data;
       const { source, target } = langs;
 
+      createOverlay();
+
       // Send a message informing the popup that the translation has started
       void sendMessage('status', { status: 'translating', message: '' }, 'popup');
 
       // Start the webpage translation process
       const startingEl = document.querySelector('body');
 
+      // Using the Promise chaining API to appease the TS compiler because onMessage does not allow
+      // async callbacks.
       startTranslation(creds, source, target, startingEl)
         .then(() => {
           // Send a message to the popup indicating the translation has completed
@@ -77,10 +84,19 @@ function messageHandler() {
             { status: 'error', message: 'An error occurred. The document failed to translate.' },
             { context, tabId }
           );
+        })
+        .finally(() => {
+          destroyOverlay();
         });
     }
   );
+}
 
+/**
+ * Listen for messages from the popup window that instruct the contentScript to clear the
+ * localStorage translation cache for the current page.
+ */
+function clearCacheHandler() {
   // Listen to requests to clear the current page's translation cache
   onMessage('clearCache', ({ sender: { context, tabId } }) => {
     lockr.rm(window.location.href);
@@ -142,4 +158,13 @@ async function startTranslation(
   } else {
     throw new Error('Amazon Translate Error: The top level tag does not exist on the document.');
   }
+}
+
+/**
+ * This is a required message handler that must be registered for the extension to function.
+ */
+function tabPrevHandler() {
+  onMessage('tab-prev', () => {
+    console.log('Registering tab-prev');
+  });
 }
