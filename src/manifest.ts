@@ -40,7 +40,7 @@ export async function getManifest(): Promise<Manifest.WebExtensionManifest> {
       48: './assets/logo.png',
       128: './assets/logo.png',
     },
-    permissions: ['tabs', 'storage', 'activeTab', 'http://*/', 'https://*/'],
+    permissions: ['tabs', 'storage', 'activeTab', 'http://*/', 'https://*/', 'contextMenus'],
     content_scripts: [
       {
         matches: ['http://*/*', 'https://*/*'],

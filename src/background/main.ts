@@ -20,6 +20,7 @@ import { Tabs } from 'webextension-polyfill';
 import { getCurrentTabId } from '../util';
 import { lockr } from '../modules';
 import { AwsOptions, ExtensionOptions } from '~/constants';
+import { translateDocuments } from '../contentScripts/functions';
 
 // @ts-ignore only on dev mode
 if (import.meta.hot) {
@@ -32,6 +33,7 @@ if (import.meta.hot) {
 browser.runtime.onInstalled.addListener((): void => {
   console.info('Extension installed');
   translateHotKeyHandler();
+  translateSelectionHandler();
 });
 
 let previousTabId = 0;
@@ -117,3 +119,38 @@ onMessage('get-current-tab', async () => {
     };
   }
 });
+
+// Translate selection with right-click menu
+const escape = (text: string): string => {
+  return text.replaceAll('"', '\\"').replaceAll("'", "\\'");
+};
+
+function translateSelectionHandler() {
+  browser.contextMenus.create({
+    title: 'Translate selection',
+    contexts: ['selection'],
+    id: 'translate-selection',
+  });
+
+  browser.contextMenus.onClicked.addListener((info): void => {
+    void (async () => {
+      if (info.menuItemId === 'translate-selection') {
+        const translatedDocs = await translateDocuments(
+          {
+            region: lockr.get(AwsOptions.AWS_REGION, ''),
+            credentials: {
+              accessKeyId: lockr.get(AwsOptions.AWS_ACCESS_KEY_ID, ''),
+              secretAccessKey: lockr.get(AwsOptions.AWS_SECRET_ACCESS_KEY, ''),
+            },
+          },
+          lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto'),
+          lockr.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en'),
+          [info.selectionText]
+        );
+
+        const alertWindow = `alert('${escape(translatedDocs[0])}')`;
+        void browser.tabs.executeScript({ code: alertWindow });
+      }
+    });
+  });
+}
