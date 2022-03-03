@@ -1,12 +1,20 @@
 import { JSDOM } from 'jsdom';
 
-export const DOM = new JSDOM(`
+const BASE_DOM_START = `
 <!DOCTYPE html>
 <html>
 <head>
   <title>TEST DOM</title>
 </head>
-<body>
+<body>`;
+
+const BASE_DOM_END = `
+</body>
+</html>
+`;
+
+export const DOM = new JSDOM(`
+${BASE_DOM_START}
   <div class="ancestor">
     <div class="parent1">
       <p class="child1">
@@ -25,22 +33,42 @@ export const DOM = new JSDOM(`
       </div>
     </div>
   </div>
-</body>
-</html>
+${BASE_DOM_END}
 `);
 
 export const DOM_WITH_EMPTY = new JSDOM(`
-<!DOCTYPE html>
-<html>
-<head>
-  <title>TEST DOM</title>
-</head>
-<body>
+${BASE_DOM_START}
   <p>I'm not empty</p>
   <p>       </p>
-</body>
-</html>
+${BASE_DOM_END}
 `);
 
-export const DOM_EL_POPULATED = new JSDOM(`<!DOCTYPE html><p id="test">populated text</p>`);
-export const DOM_EL_EMPTY = new JSDOM(`<!DOCTYPE html><p id="test">     </p>`);
+export const DOM_EL_POPULATED = new JSDOM(
+  `${BASE_DOM_START}<p id="test">populated text</p>${BASE_DOM_END}`
+);
+
+export const DOM_EL_EMPTY = new JSDOM(`${BASE_DOM_START}<p id="test">     </p>${BASE_DOM_END}`);
+
+export const DOM_EL_SCRIPT = new JSDOM(
+  `${BASE_DOM_START}<script>console.log('hello world!');</script>${BASE_DOM_END}`
+);
+
+export const DOM_EL_STYLE = new JSDOM(
+  `${BASE_DOM_START}<style>.error { color: red; }</style>${BASE_DOM_END}`
+);
+
+export const DOM_EL_PRE = new JSDOM(
+  `${BASE_DOM_START}<pre>console.log('hello world!');</pre>${BASE_DOM_END}`
+);
+
+export const DOM_EL_COMMENT = new JSDOM(
+  `${BASE_DOM_START}<!-- This is a comment. -->${BASE_DOM_END}`
+);
+
+export const DOM_EL_NOSCRIPT = new JSDOM(
+  `${BASE_DOM_START}<noscript>JavaScript is disabled.</noscript>${BASE_DOM_END}`
+);
+
+export const DOM_EL_CODE = new JSDOM(
+  `${BASE_DOM_START}<code>$: npm run test</code>${BASE_DOM_END}`
+);
