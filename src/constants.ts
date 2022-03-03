@@ -2,7 +2,54 @@
   Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
   SPDX-License-Identifier: Apache-2.0
 */
+
+/*-----------------------------*\
+ * Lockr
+\*-----------------------------*/
+
 export const LOCKR_PREFIX = 'amazonTranslate_';
+
+/*-----------------------------*\
+ * Crawling and Parsing
+\*-----------------------------*/
+
+// The maximum translate document size in bytes
+export const DOC_BOUNDARY = 500;
+
+// Node types that the crawler should ignore
+export const IGNORED_NODES = ['SCRIPT', 'STYLE', 'PRE', '#comment', 'NOSCRIPT', 'CODE'];
+
+// The pattern that all pages should conform to
+export const PAGE_PATTERN = /<\|\d+:(?<=:).*?(?=\|)\|>/g;
+
+// The pattern to split translated documents into pages
+export const PAGE_SPLIT_PATTERN = /[(<|)|(|>)]/g;
+
+/*-----------------------------*\
+ * localStorage Access Keys
+\*-----------------------------*/
+
+/**
+ * Local storage keys for AWS credentials.
+ */
+export enum AwsOptions {
+  AWS_REGION = 'awsRegion',
+  AWS_ACCESS_KEY_ID = 'awsAccessKeyId',
+  AWS_SECRET_ACCESS_KEY = 'awsSecretAccessKey',
+}
+
+/**
+ * Local storage keys for extension options.
+ */
+export enum ExtensionOptions {
+  CACHING_ENABLED = 'cachingEnabled',
+  DEFAULT_SOURCE_LANG = 'defaultSourceLang',
+  DEFAULT_TARGET_LANG = 'defaultTargetLang',
+}
+
+/*-----------------------------*\
+ * Language Lists
+\*-----------------------------*/
 
 /**
  * Array of objects representing the languages that are supported by Amazon Translate.
@@ -297,21 +344,3 @@ export const languages = [
     code: 'cy',
   },
 ];
-
-/**
- * Local storage keys for AWS credentials.
- */
-export enum AwsOptions {
-  AWS_REGION = 'awsRegion',
-  AWS_ACCESS_KEY_ID = 'awsAccessKeyId',
-  AWS_SECRET_ACCESS_KEY = 'awsSecretAccessKey',
-}
-
-/**
- * Local storage keys for extension options.
- */
-export enum ExtensionOptions {
-  CACHING_ENABLED = 'cachingEnabled',
-  DEFAULT_SOURCE_LANG = 'defaultSourceLang',
-  DEFAULT_TARGET_LANG = 'defaultTargetLang',
-}

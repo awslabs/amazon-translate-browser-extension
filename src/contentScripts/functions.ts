@@ -17,15 +17,7 @@ import {
   CacheLangs,
   CacheTextMap,
 } from '../_contracts';
-
-// The maximum translate document size in bytes
-const DOC_BOUNDARY = 500;
-// Node types that the crawler should ignore
-const IGNORED_NODES = ['SCRIPT', 'STYLE', 'PRE', '#comment', 'NOSCRIPT'];
-// The formatting to apply to pages before translation
-const PAGE_PATTERNIZE = (id: string, text: string) => `<|${id}:${text}|>`;
-// The pattern to split translated documents into pages
-const PAGE_PATTERN = /[(<|)|(|>)]/g;
+import { IGNORED_NODES, DOC_BOUNDARY, PAGE_SPLIT_PATTERN } from '../constants';
 
 /**
  * Recursively crawls the webpage starting from the specified starting node and translates
@@ -77,7 +69,7 @@ export function validNodeText(node: Node): string | null {
  * Example Page: "<|1:some text|>"
  */
 export function writePages(pages: PageMap): string[] {
-  return Object.entries(pages).map(([key, text]) => PAGE_PATTERNIZE(key, text));
+  return Object.entries(pages).map(([key, text]) => pagePatternize(key, text));
 }
 
 /**
@@ -199,7 +191,9 @@ function translateDocument(
 export function breakDocuments(docs: Documents): string[] {
   return docs.reduce(
     (acc, doc) =>
-      acc.concat(doc.split(PAGE_PATTERN).filter((line: string) => line !== '' && line !== ' ')),
+      acc.concat(
+        doc.split(PAGE_SPLIT_PATTERN).filter((line: string) => line !== '' && line !== ' ')
+      ),
     [] as string[]
   );
 }
@@ -292,6 +286,13 @@ export function applyTranslation(nodeMap: NodeMap, pages: string[]): void {
       node.textContent = text;
     }
   });
+}
+
+/**
+ * Applies template formatting to pages for later parsing.
+ */
+export function pagePatternize(id: string, text: string): string {
+  return `<|${id}:${text}|>`;
 }
 
 /**
