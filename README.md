@@ -52,3 +52,7 @@ of the translation of the page and reduces the amount of requests made to the Am
 
 If you would like to re-run a translation for a page, the extension popup should show a link that allows you to clear the cache for the current page.
 Once the cache is cleared your next translate request will use the Amazon Translate service for a fresh translation. The new translation will now be cached.
+
+## Contributing
+
+Please read our contributing documentation before writing any code: [CONTRIBUTING.md](CONTRIBUTING.md)
