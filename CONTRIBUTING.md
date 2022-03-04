@@ -10,6 +10,32 @@ information to effectively respond to your bug report or contribution.
 
 We are currently in the process of removing windi-css support. Please do NOT submit PR's that contain windi-css utility classes.
 
+## Commiting
+
+This project uses **Conventional Commits**. Please familiarize yourself with this topic here: https://www.conventionalcommits.org/en/v1.0.0-beta.2/
+
+When you first install the project dependencies the `prepare` npm hook should fire which will install some git hooks locally in
+your project. The process for creating a commit is the following:
+
+1. Verify that all of the current changes you want to commit are staged (`git add <filename>`).
+2. Once you are ready to commit your changes run `git commit`.
+3. Follow the prompts to construct your semantic commit message.
+
+The purpose of this process is to keep our commit messages following semantic standards that the **semantic-release** library can
+understand and automatically create the proper release based on the commits that are merged into the `main` branch.
+
+You should work to ensure that you only have 1 commit per github issue. This will ensure that when your code is merged to main that
+**semantic-release** can properly read the commit message. If you have more than 1 commit in your changes you will need to make sure that
+your PR title is named according to the semantic commit standards. Let's take a look at a couple of example PR titles:
+
+> **Bad PR Title**
+> adds XYZ feature
+
+> **Good PR Title**
+> feat: adds XYZ
+
+**semantic-release** will pick up on `feat:` and will know to release a new minor version of the extension.
+
 ## Reporting Bugs/Feature Requests
 
 We welcome you to use the GitHub issue tracker to report bugs or suggest features.
