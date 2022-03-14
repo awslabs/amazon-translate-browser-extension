@@ -23,7 +23,7 @@ export const IGNORED_NODES = ['SCRIPT', 'STYLE', 'PRE', '#comment', 'NOSCRIPT', 
 export const PAGE_PATTERN = /<\|\d+:(?<=:).*?(?=\|)\|>/g;
 
 // The pattern to split translated documents into pages
-export const PAGE_SPLIT_PATTERN = /[(<|)|(|>)]/g;
+export const PAGE_SPLIT_PATTERN = /(?:<\|)|(?:\|>)/g;
 
 /*-----------------------------*\
  * localStorage Access Keys
