@@ -19,11 +19,11 @@ export const DOC_BOUNDARY = 500;
 // Node types that the crawler should ignore
 export const IGNORED_NODES = ['SCRIPT', 'STYLE', 'PRE', '#comment', 'NOSCRIPT', 'CODE'];
 
-// The pattern that all pages should conform to
+// The pattern that all pages should conform to (https://regexr.com/6hc1f)
 export const PAGE_PATTERN = /<\|\d+:(?<=:).*?(?=\|)\|>/g;
 
 // The pattern to split translated documents into pages
-export const PAGE_SPLIT_PATTERN = /[(<|)|(|>)]/g;
+export const PAGE_SPLIT_PATTERN = /(?:<\|)|(?:\|>)/g;
 
 /*-----------------------------*\
  * localStorage Access Keys
