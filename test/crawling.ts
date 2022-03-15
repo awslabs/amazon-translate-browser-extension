@@ -18,7 +18,7 @@ import {
 } from './data';
 
 test('crawls a web page and returns a pageMap and a nodeMap', t => {
-  const body = DOM.window.document.querySelector('body');
+  const body = DOM().window.document.querySelector('body');
   if (body) {
     const { pageMap, nodeMap } = crawl(body);
 
@@ -39,7 +39,7 @@ test('crawls a web page and returns a pageMap and a nodeMap', t => {
 });
 
 test('crawling a web page does not return text from <code> nodes', t => {
-  const body = DOM_EL_CODE.window.document.querySelector('body');
+  const body = DOM_EL_CODE().window.document.querySelector('body');
   if (body) {
     const { pageMap } = crawl(body);
     t.is(Object.keys(pageMap).length, 0);
@@ -49,7 +49,7 @@ test('crawling a web page does not return text from <code> nodes', t => {
 });
 
 test('crawling a web page does not return text from <!-- comment --> nodes', t => {
-  const body = DOM_EL_COMMENT.window.document.querySelector('body');
+  const body = DOM_EL_COMMENT().window.document.querySelector('body');
   if (body) {
     const { pageMap } = crawl(body);
     t.is(Object.keys(pageMap).length, 0);
@@ -59,7 +59,7 @@ test('crawling a web page does not return text from <!-- comment --> nodes', t =
 });
 
 test('crawling a web page does not return text from <noscript> nodes', t => {
-  const body = DOM_EL_NOSCRIPT.window.document.querySelector('body');
+  const body = DOM_EL_NOSCRIPT().window.document.querySelector('body');
   if (body) {
     const { pageMap } = crawl(body);
     t.is(Object.keys(pageMap).length, 0);
@@ -69,7 +69,7 @@ test('crawling a web page does not return text from <noscript> nodes', t => {
 });
 
 test('crawling a web page does not return text from <pre> nodes', t => {
-  const body = DOM_EL_PRE.window.document.querySelector('body');
+  const body = DOM_EL_PRE().window.document.querySelector('body');
   if (body) {
     const { pageMap } = crawl(body);
     t.is(Object.keys(pageMap).length, 0);
@@ -79,7 +79,7 @@ test('crawling a web page does not return text from <pre> nodes', t => {
 });
 
 test('crawling a web page does not return text from <script> nodes', t => {
-  const body = DOM_EL_SCRIPT.window.document.querySelector('body');
+  const body = DOM_EL_SCRIPT().window.document.querySelector('body');
   if (body) {
     const { pageMap } = crawl(body);
     t.is(Object.keys(pageMap).length, 0);
@@ -89,7 +89,7 @@ test('crawling a web page does not return text from <script> nodes', t => {
 });
 
 test('crawling a web page does not return text from <style> nodes', t => {
-  const body = DOM_EL_STYLE.window.document.querySelector('body');
+  const body = DOM_EL_STYLE().window.document.querySelector('body');
   if (body) {
     const { pageMap } = crawl(body);
     t.is(Object.keys(pageMap).length, 0);
@@ -99,7 +99,7 @@ test('crawling a web page does not return text from <style> nodes', t => {
 });
 
 test('crawling a web page does not return empty text nodes', t => {
-  const body = DOM_WITH_EMPTY.window.document.querySelector('body');
+  const body = DOM_WITH_EMPTY().window.document.querySelector('body');
   if (body) {
     const { pageMap, nodeMap } = crawl(body);
 
@@ -115,8 +115,8 @@ test('crawling a web page does not return empty text nodes', t => {
 });
 
 test('validate that the given DOM node is a TEXT_NODE and consists of characters other than white-space and line-breaks.', t => {
-  const p1 = DOM_EL_POPULATED.window.document.querySelector('#test');
-  const p2 = DOM_EL_EMPTY.window.document.querySelector('#test');
+  const p1 = DOM_EL_POPULATED().window.document.querySelector('#test');
+  const p2 = DOM_EL_EMPTY().window.document.querySelector('#test');
 
   if (p1 && p2) {
     const result1 = validNodeText(p1.childNodes[0]);

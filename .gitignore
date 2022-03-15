@@ -8,3 +8,5 @@ release/
 test/data/private
 src/assets/logo.svg
 src/assets/logo.png
+scratch
+package-lock.json

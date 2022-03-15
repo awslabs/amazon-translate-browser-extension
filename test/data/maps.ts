@@ -1,14 +1,19 @@
-import { DOM } from './dom';
-import { PageMap, NodeMap } from '../../src/_contracts';
+import { PageMap, CacheTextMap } from '../../src/_contracts';
 
-export const pageMap: PageMap = {
+export const sourcePageMap = (): PageMap => ({
   1: 'some text',
   2: 'more text',
   3: 'even more text',
-};
+});
 
-export const nodeMap: NodeMap = {
-  1: DOM.window.document.createTextNode('some text'),
-  2: DOM.window.document.createTextNode('more text'),
-  3: DOM.window.document.createTextNode('even more text'),
-};
+export const targetPageMap = (): PageMap => ({
+  1: 'algún texto',
+  2: 'más texto',
+  3: 'aún más texto',
+});
+
+export const cacheTextMap = (): CacheTextMap => ({
+  'some text': 'algún texto',
+  'more text': 'más texto',
+  'even more text': 'aún más texto',
+});

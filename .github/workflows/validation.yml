@@ -16,7 +16,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Setup pnpm
@@ -41,7 +41,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Setup pnpm
@@ -66,7 +66,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Setup pnpm

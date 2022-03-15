@@ -109,7 +109,7 @@ export function bindPages(pages: string[]): Documents {
  *
  * `["<|1:algún texto|><|2:más texto|>", "<|3:aún más texto|>"]`
  */
-export async function translateDocuments(
+export async function translateMany(
   creds: TranslateClientConfig,
   SourceLanguageCode: string,
   TargetLanguageCode: string,
@@ -137,6 +137,7 @@ export async function translateDocuments(
 
 /**
  * Maps over a set of documents to be translated and waits for all of the requests to settle.
+ * NOTE: This can be refactored.
  */
 async function sendDocumentsToTranslate(
   client: TranslateClient,
@@ -152,32 +153,29 @@ async function sendDocumentsToTranslate(
           SourceLanguageCode,
           TargetLanguageCode,
         });
-        translateDocument(client, command, resolve, reject);
+        promiseWithRetry<TranslateTextCommandOutput>(resolve, reject, async () => {
+          return client.send(command);
+        });
       });
     })
   );
 }
 
 /**
- * Attempts to translate a document with the Amazon Translate API. It retries up to a maximum of
- * 3 times with exponential backoff's if the translate command fails.
+ * Executes an Promise and retries if it is rejected up to 3 times.
  */
-function translateDocument(
-  client: TranslateClient,
-  command: TranslateTextCommand,
-  resolve: (value: TranslateTextCommandOutput) => void,
+function promiseWithRetry<T>(
+  resolve: (value: T) => void,
   reject: (reason?: any) => void,
+  cb: () => Promise<T>,
   attempts = 0
 ) {
   setTimeout(() => {
-    client
-      .send(command)
-      .then(res => {
-        resolve(res);
-      })
+    cb()
+      .then(res => resolve(res))
       .catch(e => {
         if (attempts < 4) {
-          translateDocument(client, command, resolve, reject, attempts + 1);
+          void promiseWithRetry<T>(resolve, reject, cb, attempts + 1);
         } else {
           reject(e);
         }
@@ -199,13 +197,15 @@ export function breakDocuments(docs: Documents): string[] {
 }
 
 /**
- * Breaks apart a set of pages into a page map (node id mapped to translated text).
+ * Generates a PageMap from a set of sanitized pages.
  */
-export function breakPages(pages: string[]): PageMap {
-  return pages.reduce((acc, page) => {
-    const [key] = page.split(':');
-    const text = page.substring(key.length + 1);
-    acc[key] = text;
+export function createPageMap(sanitizedPages: string[]): PageMap {
+  return sanitizedPages.reduce((acc, page) => {
+    if (pageIsValid(page)) {
+      const [key, text] = splitPage(page);
+      acc[key] = text;
+      return acc;
+    }
     return acc;
   }, {} as PageMap);
 }
@@ -223,9 +223,9 @@ export function getCache(url: string, source: string, target: string): CacheText
  * a TextMap that matches the source language text to the translated language text. This is used for
  * caching.
  */
-export function makeCacheTextMap(pageMap: PageMap, translatedPageMap: PageMap): CacheTextMap {
-  return Object.entries(pageMap).reduce((acc, [key, page]) => {
-    acc[page] = translatedPageMap[key];
+export function makeCacheTextMap(sourcePageMap: PageMap, targetPageMap: PageMap): CacheTextMap {
+  return Object.entries(sourcePageMap).reduce((acc, [key, page]) => {
+    acc[page] = targetPageMap[key];
     return acc;
   }, {} as CacheTextMap);
 }
@@ -251,41 +251,44 @@ export function cacheTranslation(
 }
 
 /**
- * Applies cached translations to the DOM.
- *
- * NOTE: This could probably be merged with applyTranslation when we have time.
+ * Swaps the text at the node with the provided ID.
  */
-export function applyCachedTranslation(
-  pageMap: PageMap,
-  nodeMap: NodeMap,
-  cache: CacheTextMap
-): void {
-  Object.entries(pageMap).forEach(([id, page]) => {
-    const translated = cache[page];
-    const node = nodeMap[Number(id)];
-    if (node && translated) {
-      node.textContent = translated;
-    }
-  });
+export function swapText(nodeMap: NodeMap, id: string, text: string): void {
+  const node = nodeMap[id];
+  if (node) {
+    node.textContent = text;
+  }
 }
 
 /**
- * Takes a node map and applies the translated documents to the DOM by parsing each
- * page and node ID then swapping the current text with the translated text.
+ * Ensure that the page only contains normal colons.
  */
-export function applyTranslation(nodeMap: NodeMap, pages: string[]): void {
-  // Loop over each
-  pages.forEach(page => {
-    let [id, text] = page.split(':');
-    // This is a workaround for an Amazon Translate bug that occasionally returns the wrong colon
-    if (id === undefined || text === undefined) {
-      [id, text] = page.split('：');
-    }
-    const node = nodeMap[Number(id)];
-    if (node) {
-      node.textContent = text;
-    }
-  });
+export function sanitizePage(page: string): string {
+  return page.replaceAll('：', ':');
+}
+
+/**
+ * Validates that a page contains a normal colon separating the
+ * node ID from the text.
+ */
+export function pageIsValid(page: string): boolean {
+  const valid = page.indexOf(':') !== -1 && !isNaN(Number(page.slice(0, page.indexOf(':'))));
+  if (!valid && process?.env?.NODE_ENV !== 'test') {
+    console.debug(
+      'Amazon Translate Browser Extension: A chunk of translated text is invalid.',
+      page
+    );
+  }
+  return valid;
+}
+
+/**
+ * Splits sanitized and valid page string into a tuple of [id, text].
+ */
+export function splitPage(validPage: string): [string, string] {
+  const id = validPage.slice(0, validPage.indexOf(':'));
+  const text = validPage.slice(validPage.indexOf(':') + 1, validPage.length);
+  return [id, text];
 }
 
 /**
