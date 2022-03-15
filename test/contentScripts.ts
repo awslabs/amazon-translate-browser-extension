@@ -52,12 +52,17 @@ test('Takes DOM text pages (text lines) and binds them into documents (chunks)',
 });
 
 test('breaks documents into pages', t => {
-  const documents = ['<|1:algún texto|><|2:más texto|>', '<|3:aún más texto|>'];
+  const documents = [
+    '<|1:algún texto|><|2:más texto|>',
+    '<|3:aún más texto|>',
+    '<|4:more (more) text|>',
+  ];
   const pages = breakDocuments(documents);
 
   t.is(pages[0], '1:algún texto');
   t.is(pages[1], '2:más texto');
   t.is(pages[2], '3:aún más texto');
+  t.is(pages[3], '4:more (more) text');
 });
 
 test('creates a PageMap from sanitized pages', t => {
