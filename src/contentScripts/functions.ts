@@ -273,7 +273,7 @@ export function sanitizePage(page: string): string {
  */
 export function pageIsValid(page: string): boolean {
   const valid = page.indexOf(':') !== -1 && !isNaN(Number(page.slice(0, page.indexOf(':'))));
-  if (!valid && process?.env?.NODE_ENV !== 'test') {
+  if (!valid) {
     console.debug(
       'Amazon Translate Browser Extension: A chunk of translated text is invalid.',
       page
