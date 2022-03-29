@@ -26,6 +26,7 @@ import { startTranslation } from './translate';
 (() => {
   // Setup message handlers. These handlers receive messages from the popup window.
   translateHandler();
+  translateSelectionHandler();
   clearCacheHandler();
   tabPrevHandler();
 })();
@@ -72,6 +73,54 @@ function translateHandler() {
         });
     }
   );
+}
+
+function translateSelectionHandler() {
+  onMessage<TranslateCommandData, 'translate-selection'>('translate-selection', ({ data }) => {
+    const { translatedText } = data;
+
+    const body = document.querySelector('body');
+
+    const container = document.createElement('div');
+    container.id = 'amazon-translate-popup';
+    container.style.position = 'fixed';
+    container.style.bottom = '0px';
+    container.style.left = '0px';
+    container.style.width = '98vw';
+    container.style.maxWidth = '98%';
+    container.style.zIndex = '1000000000';
+    container.style.padding = '20px';
+    container.style.color = '#000000';
+    container.style.fontSize = '16px';
+    container.style.fontWeight = 'normal';
+    container.style.fontFamily = 'Arial';
+    container.style.backgroundColor = '#ffffff';
+    container.style.boxShadow = '0px 0px 20px #000000';
+
+    const closeButton = document.createElement('div');
+    closeButton.innerText = 'x';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '10px';
+    closeButton.style.left = '10px';
+    closeButton.addEventListener('click', event => {
+      const containerBox = event.target?.parentNode;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      containerBox.parentNode?.removeChild(containerBox);
+    });
+
+    const title = document.createElement('h3');
+    title.innerText = 'Amazon Translate';
+
+    const translatedTextElement = document.createElement('p');
+    translatedTextElement.innerText = translatedText;
+    translatedTextElement.width = '90%';
+
+    container.appendChild(title);
+    container.appendChild(translatedTextElement);
+    container.appendChild(closeButton);
+
+    body?.appendChild(container);
+  });
 }
 
 /**

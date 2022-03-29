@@ -96,6 +96,7 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
     .then(tab => {
       previousTabId = tabId;
       console.info('previous tab', tab);
+      console.info('test');
       void sendMessage('tab-prev', { title: tab.title }, { context: 'content-script', tabId });
     })
     .catch(() => {
@@ -148,9 +149,16 @@ function translateSelectionHandler() {
           [info.selectionText]
         );
 
-        const alertWindow = `alert('${escape(translatedDocs[0])}')`;
-        void browser.tabs.executeScript({ code: alertWindow });
+        const tabId = await getCurrentTabId();
+        void sendMessage(
+          'translate-selection',
+          { translatedText: escape(translatedDocs[0]) },
+          {
+            context: 'content-script',
+            tabId,
+          }
+        );
       }
-    });
+    })();
   });
 }
