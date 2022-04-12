@@ -131,6 +131,18 @@ function translateSelectionHandler() {
 
     body?.appendChild(container);
 
+    document.body.addEventListener(
+      'click',
+      () => {
+        container.parentNode.removeChild(container);
+      },
+      { once: true }
+    );
+
+    container.addEventListener('click', event => {
+      event.stopPropagation();
+    });
+
     destroyOverlay();
   });
 }
