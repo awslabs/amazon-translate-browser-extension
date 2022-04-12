@@ -131,6 +131,7 @@ function translateSelectionHandler() {
 
     body?.appendChild(container);
 
+    // Close the popup when clicked outside
     document.body.addEventListener(
       'click',
       () => {

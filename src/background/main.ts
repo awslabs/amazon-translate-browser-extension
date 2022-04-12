@@ -96,7 +96,6 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
     .then(tab => {
       previousTabId = tabId;
       console.info('previous tab', tab);
-      console.info('test');
       void sendMessage('tab-prev', { title: tab.title }, { context: 'content-script', tabId });
     })
     .catch(() => {
