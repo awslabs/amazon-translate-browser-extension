@@ -20,7 +20,7 @@ import { Tabs } from 'webextension-polyfill';
 import { getCurrentTabId } from '../util';
 import { lockr } from '../modules';
 import { AwsOptions, ExtensionOptions } from '~/constants';
-import { translateDocuments } from '../contentScripts/functions';
+import { translateMany } from '../contentScripts/functions';
 
 // @ts-ignore only on dev mode
 if (import.meta.hot) {
@@ -144,7 +144,7 @@ function translateSelectionHandler() {
             tabId,
           }
         );
-        const translatedDocs = await translateDocuments(
+        const translatedDocs = await translateMany(
           {
             region: lockr.get(AwsOptions.AWS_REGION, ''),
             credentials: {
