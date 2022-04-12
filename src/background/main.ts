@@ -136,6 +136,15 @@ function translateSelectionHandler() {
   browser.contextMenus.onClicked.addListener((info): void => {
     void (async () => {
       if (info.menuItemId === 'translate-selection') {
+        const tabId = await getCurrentTabId();
+        void sendMessage(
+          'show-overlay',
+          {},
+          {
+            context: 'content-script',
+            tabId,
+          }
+        );
         const translatedDocs = await translateDocuments(
           {
             region: lockr.get(AwsOptions.AWS_REGION, ''),
@@ -149,7 +158,6 @@ function translateSelectionHandler() {
           [info.selectionText]
         );
 
-        const tabId = await getCurrentTabId();
         void sendMessage(
           'translate-selection',
           { translatedText: escape(translatedDocs[0]) },

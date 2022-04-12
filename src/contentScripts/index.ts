@@ -26,10 +26,20 @@ import { startTranslation } from './translate';
 (() => {
   // Setup message handlers. These handlers receive messages from the popup window.
   translateHandler();
+  showOverlayHandler();
   translateSelectionHandler();
   clearCacheHandler();
   tabPrevHandler();
 })();
+
+/**
+ * Show the "translating..." overlay
+ */
+function showOverlayHandler() {
+  onMessage<TranslateCommandData, 'show-overlay'>('show-overlay', () => {
+    createOverlay();
+  });
+}
 
 /**
  * Listen for messages from the popup window that contain the AWS creds and selected
@@ -120,6 +130,8 @@ function translateSelectionHandler() {
     container.appendChild(closeButton);
 
     body?.appendChild(container);
+
+    destroyOverlay();
   });
 }
 
