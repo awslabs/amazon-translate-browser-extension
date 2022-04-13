@@ -85,6 +85,9 @@ function translateHandler() {
   );
 }
 
+/**
+ * Show the result of "translate selections in popup" message from background script
+ */
 function translateSelectionHandler() {
   onMessage<TranslateCommandData, 'translate-selection'>('translate-selection', ({ data }) => {
     const { translatedText } = data;

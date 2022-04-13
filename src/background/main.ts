@@ -120,11 +120,17 @@ onMessage('get-current-tab', async () => {
   }
 });
 
-// Translate selection with right-click menu
+/**
+ * Escape special characters for passing strings safely between
+ * background script and content script
+ */
 const escape = (text: string): string => {
   return text.replaceAll('"', '\\"').replaceAll("'", "\\'");
 };
 
+/**
+ * Translate selection in a popup using right-click menu
+ */
 function translateSelectionHandler() {
   browser.contextMenus.create({
     title: 'Translate selection',
