@@ -20,12 +20,12 @@ import { Tabs } from 'webextension-polyfill';
 import { getCurrentTabId } from '../util';
 import { lockr } from '../modules';
 import { AwsOptions, ExtensionOptions } from '~/constants';
-import { translateMany } from '../contentScripts/functions';
+import { translateMany } from '../content/functions';
 
 // @ts-ignore only on dev mode
 if (import.meta.hot) {
   // @ts-expect-error for background HMR
-  import('/@vite/client');
+  // import('/@vite/client');
   // load latest content script
   import('./contentScriptHMR');
 }

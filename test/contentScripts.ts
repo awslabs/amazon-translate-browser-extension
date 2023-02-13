@@ -17,7 +17,7 @@ import {
   sanitizePage,
   pageIsValid,
   splitPage,
-} from '../src/contentScripts/functions';
+} from '../src/content/functions';
 import { PAGE_PATTERN } from '../src/constants';
 import { DOM, sourcePageMap, targetPageMap, cacheTextMap } from './data';
 import { NodeMap } from '~/_contracts';

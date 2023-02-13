@@ -1,11 +1,11 @@
 import { resolve } from 'path';
 import { bgCyan, black } from 'kolorist';
 
-export const port = parseInt(process.env.PORT || '') || 3303;
-export const r = (...args: string[]): string => resolve(__dirname, '..', ...args);
-export const isDev = process.env.NODE_ENV !== 'production';
+export const PORT = parseInt(process.env.PORT || '') || 3309;
+export const r = (...args: string[]) => resolve(__dirname, '..', ...args);
+export const IS_DEV = process.argv[2] === 'dev';
 
-export function log(name: string, message: string): void {
+export function logger(name: string, message: string) {
   // eslint-disable-next-line no-console
   console.log(black(bgCyan(` ${name} `)), message);
 }

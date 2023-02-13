@@ -1,103 +1,83 @@
-import { dirname, relative } from 'path';
-import { defineConfig, UserConfig } from 'vite';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
 import Vue from '@vitejs/plugin-vue';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import Components from 'unplugin-vue-components/vite';
-import AutoImport from 'unplugin-auto-import/vite';
 import WindiCSS from 'vite-plugin-windicss';
+import VueI18n from '@intlify/vite-plugin-vue-i18n';
 import windiConfig from './windi.config';
-import svgLoader from 'vite-svg-loader';
-import { r, port, isDev } from './scripts/utils';
 
-export const sharedConfig: UserConfig = {
-  root: r('src'),
-  resolve: {
-    alias: {
-      '~/': `${r('src')}/`,
+const port = parseInt(process.env.PORT || '') || 3309;
+const r = (...args: string[]) => resolve(__dirname, ...args);
+
+export default defineConfig(({ command }) => {
+  const isDev = command === 'serve';
+
+  return {
+    root: r('src'),
+    base: isDev ? `http://localhost:${port}/` : undefined,
+    resolve: {
+      alias: {
+        '~/': `${r('src')}/`,
+      },
     },
-  },
-  define: {
-    __DEV__: isDev,
-  },
-  plugins: [
-    Vue(),
-
-    svgLoader(),
-
-    AutoImport({
-      imports: [
-        'vue',
-        {
-          'webextension-polyfill': [['default', 'browser']],
+    server: {
+      port,
+      hmr: {
+        host: 'localhost',
+      },
+    },
+    build: {
+      outDir: r('extension/prod'),
+      emptyOutDir: false,
+      sourcemap: isDev ? 'inline' : false,
+      rollupOptions: {
+        input: {
+          popup: r('src/popup/index.html'),
+          options: r('src/options/index.html'),
         },
-      ],
-      dts: r('src/auto-imports.d.ts'),
-    }),
+      },
+    },
+    plugins: [
+      Vue(),
 
-    // https://github.com/antfu/unplugin-vue-components
-    Components({
-      dirs: [r('src/components')],
-      // generate `components.d.ts` for ts support with Volar
-      dts: true,
-      resolvers: [
+      Components({
+        dirs: [r('src/components')],
         // auto import icons
-        IconsResolver({
-          componentPrefix: '',
-        }),
-      ],
-    }),
+        resolvers: [
+          IconsResolver({
+            prefix: '',
+          }),
+        ],
+      }),
 
-    // https://github.com/antfu/unplugin-icons
-    Icons(),
+      Icons(),
 
-    // rewrite assets to use relative path
-    {
-      name: 'assets-rewrite',
-      enforce: 'post',
-      apply: 'build',
-      transformIndexHtml(html, { path }) {
-        return html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets')}/`);
+      // https://github.com/antfu/vite-plugin-windicss
+      WindiCSS({
+        config: windiConfig,
+      }),
+
+      // https://github.com/intlify/vite-plugin-vue-i18n
+      VueI18n({
+        include: [resolve(__dirname, 'src/locales/**')],
+      }),
+
+      // rewrite assets to use relative path
+      {
+        name: 'assets-rewrite',
+        enforce: 'post',
+        apply: 'build',
+        transformIndexHtml(html) {
+          return html.replace(/"\/assets\//g, '"../assets/');
+        },
       },
-    },
-  ],
-  optimizeDeps: {
-    include: ['vue', '@vueuse/core', 'webextension-polyfill'],
-    exclude: ['vue-demi'],
-  },
-};
+    ],
 
-export default defineConfig(({ command }) => ({
-  ...sharedConfig,
-  base: command === 'serve' ? `http://localhost:${port}/` : '/dist/',
-  server: {
-    port,
-    hmr: {
-      host: 'localhost',
+    optimizeDeps: {
+      include: ['vue', '@vueuse/core'],
+      exclude: ['vue-demi'],
     },
-  },
-  build: {
-    outDir: r('extension/dist'),
-    emptyOutDir: false,
-    sourcemap: isDev ? 'inline' : false,
-    // https://developer.chrome.com/docs/webstore/program_policies/#:~:text=Code%20Readability%20Requirements
-    terserOptions: {
-      mangle: false,
-    },
-    rollupOptions: {
-      input: {
-        background: r('src/background/index.html'),
-        options: r('src/options/index.html'),
-        popup: r('src/popup/index.html'),
-      },
-    },
-  },
-  plugins: [
-    ...sharedConfig.plugins!,
-
-    // https://github.com/antfu/vite-plugin-windicss
-    WindiCSS({
-      config: windiConfig,
-    }),
-  ],
-}));
+  };
+});

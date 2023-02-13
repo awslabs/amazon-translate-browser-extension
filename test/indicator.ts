@@ -4,7 +4,7 @@
 */
 import test from 'ava';
 import { JSDOM } from 'jsdom';
-import { createOverlay, destroyOverlay } from '../src/contentScripts/functions';
+import { createOverlay, destroyOverlay } from '../src/content/functions';
 
 const docString = '<html><body></body></html>';
 

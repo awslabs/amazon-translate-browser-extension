@@ -56,8 +56,13 @@ Once the cache is cleared your next translate request will use the Amazon Transl
 ## Development
 To develop this extension, follow the steps below:
 1. Install the dependencies `pnpm install`.
-2. Start the development server: `npm run dev`.
+2. Start the development server: `pnpm build`.
 3. Load the `extensions` folder as an unpacked extension.
+
+## References
+For converting the manifest to V3
+1. [mv3 starter template](https://github.com/xiaoluoboding/chrome-ext-mv3-starter)
+2. [mv3 migration guide](https://developer.chrome.com/docs/extensions/mv3/mv3-migration/)
 
 ## Contributing
 

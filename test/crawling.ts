@@ -3,7 +3,7 @@
   SPDX-License-Identifier: Apache-2.0
 */
 import test from 'ava';
-import { crawl, validNodeText } from '../src/contentScripts/functions';
+import { crawl, validNodeText } from '../src/content/functions';
 import {
   DOM,
   DOM_WITH_EMPTY,
