@@ -187,12 +187,12 @@ function promiseWithRetry<T>(
  * Breaks apart a set of documents into pages.
  */
 export function breakDocuments(docs: Documents): string[] {
-  return docs.reduce(
+  return docs.reduce<string[]>(
     (acc, doc) =>
       acc.concat(
         doc.split(PAGE_SPLIT_PATTERN).filter((line: string) => line !== '' && line !== ' ')
       ),
-    [] as string[]
+    []
   );
 }
 

@@ -165,7 +165,7 @@ browser.contextMenus.onClicked.addListener((info): void => {
         },
         await local.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto'),
         await local.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en'),
-        [info.selectionText]
+        [info.selectionText || '']
       );
 
       void sendMessage(
