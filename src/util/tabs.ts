@@ -3,7 +3,7 @@
   SPDX-License-Identifier: Apache-2.0
 */
 
-import type { Tabs } from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 
 /**
  * Returns the ID of the currently viewed tab.
@@ -15,7 +15,7 @@ export async function getCurrentTabId(): Promise<number> {
 /**
  * Queries the browser for the currently viewed tab and returns it.
  */
-export async function getCurrentTab(): Promise<Tabs.Tab> {
+export async function getCurrentTab(): Promise<browser.Tabs.Tab> {
   const queryOptions = { active: true, currentWindow: true };
   const [tab] = await browser.tabs.query(queryOptions);
   return tab;
