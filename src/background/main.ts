@@ -16,10 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { sendMessage, onMessage } from 'webext-bridge';
-import { Tabs } from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 import { getCurrentTabId } from '../util';
-import { lockr } from '../modules';
-import { AwsOptions, ExtensionOptions } from '~/constants';
+import { AwsOptions, ExtensionOptions, LOCKR_PREFIX } from '~/constants';
 import { translateMany } from '../contentScripts/functions';
 
 // @ts-ignore only on dev mode
@@ -30,10 +29,28 @@ if (import.meta.hot) {
   import('./contentScriptHMR');
 }
 
+const local = {
+  get: async (key: string, defaultValue: string): Promise<string> => {
+    const prefixedKey = `${LOCKR_PREFIX}${key}`;
+    const storage = await browser.storage.local.get(prefixedKey);
+    if (prefixedKey in storage) {
+      return (storage[key] ?? defaultValue) as string;
+    }
+
+    return defaultValue;
+  },
+};
+
 browser.runtime.onInstalled.addListener((): void => {
   console.info('Extension installed');
-  translateHotKeyHandler();
-  translateSelectionHandler();
+  /**
+   * Translate selection in a popup using right-click menu
+   */
+  browser.contextMenus.create({
+    title: 'Translate selection',
+    contexts: ['selection'],
+    id: 'translate-selection',
+  });
 });
 
 let previousTabId = 0;
@@ -42,47 +59,45 @@ let previousTabId = 0;
  * Listens for keyboard keypress events and looks for the combination of cmd+alt+t for Mac systems
  * and ctrl+alt+t for Windows systems.
  */
-function translateHotKeyHandler() {
-  browser.commands.onCommand.addListener(command => {
-    void (async () => {
-      if (command === 'translate') {
-        console.info('Hotkey has triggered a translation.');
-        const tabId = await getCurrentTabId();
+browser.commands.onCommand.addListener(command => {
+  void (async () => {
+    if (command === 'translate') {
+      console.info('Hotkey has triggered a translation.');
+      const tabId = await getCurrentTabId();
 
-        const message = {
-          creds: {
-            region: lockr.get(AwsOptions.AWS_REGION, ''),
-            credentials: {
-              accessKeyId: lockr.get(AwsOptions.AWS_ACCESS_KEY_ID, ''),
-              secretAccessKey: lockr.get(AwsOptions.AWS_SECRET_ACCESS_KEY, ''),
-            },
+      const message = {
+        creds: {
+          region: await local.get(AwsOptions.AWS_REGION, ''),
+          credentials: {
+            accessKeyId: await local.get(AwsOptions.AWS_ACCESS_KEY_ID, ''),
+            secretAccessKey: await local.get(AwsOptions.AWS_SECRET_ACCESS_KEY, ''),
           },
-          langs: {
-            source: lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto'),
-            target: lockr.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en'),
-          },
-          tabId,
-          cachingEnabled: lockr.get(ExtensionOptions.CACHING_ENABLED, false),
-        };
+        },
+        langs: {
+          source: await local.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto'),
+          target: await local.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en'),
+        },
+        tabId,
+        cachingEnabled: (await local.get(ExtensionOptions.CACHING_ENABLED, 'false')) === 'true',
+      };
 
-        void sendMessage('translate', message, {
-          context: 'content-script',
-          tabId,
-        });
-      }
-    })();
-  });
-  // document.addEventListener('keydown', (event) => {
-  //   // If cmd+alt+t is being held (Mac)
-  //   if (event.metaKey && event.altKey && event.key === 't') {
-  //     console.log('Holding CMD+ALT+T !!!!');
-  //   }
-  //   // If cmd+alt+t is being held (Non-Mac)
-  //   if (event.ctrlKey && event.altKey && event.key === 't') {
-  //     console.log('Holding CTRL+ALT+T !!!!');
-  //   }
-  // });
-}
+      void sendMessage('translate', message, {
+        context: 'content-script',
+        tabId,
+      });
+    }
+  })();
+});
+// document.addEventListener('keydown', (event) => {
+//   // If cmd+alt+t is being held (Mac)
+//   if (event.metaKey && event.altKey && event.key === 't') {
+//     console.log('Holding CMD+ALT+T !!!!');
+//   }
+//   // If cmd+alt+t is being held (Non-Mac)
+//   if (event.ctrlKey && event.altKey && event.key === 't') {
+//     console.log('Holding CTRL+ALT+T !!!!');
+//   }
+// });
 
 // communication example: send previous tab title from background page
 // see shim.d.ts for type declaration
@@ -103,7 +118,7 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
     });
 });
 
-const getTabId = async (previousTabId: number): Promise<Tabs.Tab> => {
+const getTabId = async (previousTabId: number): Promise<browser.Tabs.Tab> => {
   return browser.tabs.get(previousTabId);
 };
 
@@ -128,50 +143,40 @@ const escape = (text: string): string => {
   return text.replaceAll('"', '\\"').replaceAll("'", "\\'");
 };
 
-/**
- * Translate selection in a popup using right-click menu
- */
-function translateSelectionHandler() {
-  browser.contextMenus.create({
-    title: 'Translate selection',
-    contexts: ['selection'],
-    id: 'translate-selection',
-  });
-
-  browser.contextMenus.onClicked.addListener((info): void => {
-    void (async () => {
-      if (info.menuItemId === 'translate-selection') {
-        const tabId = await getCurrentTabId();
-        void sendMessage(
-          'show-overlay',
-          {},
-          {
-            context: 'content-script',
-            tabId,
-          }
-        );
-        const translatedDocs = await translateMany(
-          {
-            region: lockr.get(AwsOptions.AWS_REGION, ''),
-            credentials: {
-              accessKeyId: lockr.get(AwsOptions.AWS_ACCESS_KEY_ID, ''),
-              secretAccessKey: lockr.get(AwsOptions.AWS_SECRET_ACCESS_KEY, ''),
-            },
+browser.contextMenus.onClicked.addListener((info): void => {
+  void (async () => {
+    if (info.menuItemId === 'translate-selection') {
+      const tabId = await getCurrentTabId();
+      void sendMessage(
+        'show-overlay',
+        {},
+        {
+          context: 'content-script',
+          tabId,
+        }
+      );
+      const translatedDocs = await translateMany(
+        {
+          region: await local.get(AwsOptions.AWS_REGION, ''),
+          credentials: {
+            accessKeyId: await local.get(AwsOptions.AWS_ACCESS_KEY_ID, ''),
+            secretAccessKey: await local.get(AwsOptions.AWS_SECRET_ACCESS_KEY, ''),
           },
-          lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto'),
-          lockr.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en'),
-          [info.selectionText]
-        );
+        },
+        await local.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto'),
+        await local.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en'),
+        [info.selectionText]
+      );
 
-        void sendMessage(
-          'translate-selection',
-          { translatedText: escape(translatedDocs[0]) },
-          {
-            context: 'content-script',
-            tabId,
-          }
-        );
-      }
-    })();
-  });
-}
+      void sendMessage(
+        'translate-selection',
+        { translatedText: escape(translatedDocs[0]) },
+        {
+          context: 'content-script',
+          tabId,
+        }
+      );
+    }
+  })();
+});
+// }

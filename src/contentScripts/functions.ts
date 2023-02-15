@@ -8,7 +8,7 @@ import {
   TranslateTextCommandOutput,
   TranslateClientConfig,
 } from '@aws-sdk/client-translate';
-import * as lockr from 'lockr';
+import { lockr } from '../modules';
 import {
   TranslateData,
   Documents,

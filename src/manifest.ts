@@ -9,7 +9,7 @@ export async function getManifest(): Promise<Manifest.WebExtensionManifest> {
   // update this file to update this manifest.json
   // can also be conditional based on your need
   const manifest: Manifest.WebExtensionManifest = {
-    manifest_version: 2,
+    manifest_version: 3,
     name: pkg.displayName || pkg.name,
     version: pkg.version,
     description: pkg.description,
@@ -22,32 +22,35 @@ export async function getManifest(): Promise<Manifest.WebExtensionManifest> {
         description: 'Translate the webpage with your default source language and target language.',
       },
     },
-    browser_action: {
+    action: {
       default_icon: './assets/logo.png',
       default_popup: './dist/popup/index.html',
     },
     options_ui: {
       page: './dist/options/index.html',
       open_in_tab: true,
-      chrome_style: false,
     },
     background: {
-      page: './dist/background/index.html',
-      persistent: false,
+      service_worker: './dist/background/background.js',
+      type: 'module',
     },
     icons: {
       16: './assets/logo.png',
       48: './assets/logo.png',
       128: './assets/logo.png',
     },
-    permissions: ['tabs', 'storage', 'activeTab', 'http://*/', 'https://*/', 'contextMenus'],
+    permissions: ['tabs', 'storage', 'activeTab', 'contextMenus'],
+    // @ts-expect-error invalid type definition
+    optional_host_permissions: ['*://*/*'],
     content_scripts: [
       {
         matches: ['http://*/*', 'https://*/*'],
         js: ['./dist/contentScripts/index.global.js'],
       },
     ],
-    web_accessible_resources: ['dist/contentScripts/style.css'],
+    web_accessible_resources: [
+      { resources: ['dist/contentScripts/style.css'], matches: ['http://*/*', 'https://*/*'] },
+    ],
   };
 
   if (isDev) {
@@ -58,7 +61,10 @@ export async function getManifest(): Promise<Manifest.WebExtensionManifest> {
     manifest.permissions?.push('webNavigation');
 
     // this is required on dev for Vite script to load
-    manifest.content_security_policy = `script-src 'self' http://localhost:${port}; object-src 'self'`;
+    // manifest.content_security_policy = `script-src 'self' http://localhost:${port}; object-src 'self'`;
+    manifest.content_security_policy = {
+      extension_pages: `script-src 'self' http://localhost:${port}; object-src 'self'`,
+    };
   }
 
   return manifest;
