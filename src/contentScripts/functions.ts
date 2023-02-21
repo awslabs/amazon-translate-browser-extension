@@ -16,6 +16,7 @@ import {
   PageMap,
   CacheLangs,
   CacheTextMap,
+  TranslatedDocuments,
 } from '../_contracts';
 import { IGNORED_NODES, DOC_BOUNDARY, PAGE_SPLIT_PATTERN } from '../constants';
 
@@ -114,7 +115,7 @@ export async function translateMany(
   SourceLanguageCode: string,
   TargetLanguageCode: string,
   docs: Documents
-): Promise<Documents> {
+): Promise<TranslatedDocuments> {
   const client = new TranslateClient(creds);
   const responses = await sendDocumentsToTranslate(
     client,
@@ -122,17 +123,20 @@ export async function translateMany(
     TargetLanguageCode,
     docs
   );
-
   if (responses.some(res => res.status === 'rejected')) {
     throw new Error('One or more parts of the document failed to translate.');
   }
 
-  return responses.reduce((docs, response) => {
+  let sourceLanguageResponse = '';
+
+  const translateTextResponse = responses.reduce((docs, response) => {
     if (response.status === 'fulfilled') {
+      sourceLanguageResponse = response.value.SourceLanguageCode ?? '';
       return docs.concat([response.value.TranslatedText ?? '']);
     }
     return docs;
   }, [] as Documents);
+  return { translatedText: translateTextResponse, sourceLanguage: sourceLanguageResponse };
 }
 
 /**

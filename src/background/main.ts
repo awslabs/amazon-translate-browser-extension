@@ -170,7 +170,7 @@ browser.contextMenus.onClicked.addListener((info): void => {
 
       void sendMessage(
         'translate-selection',
-        { translatedText: escape(translatedDocs[0]) },
+        { translatedText: escape(translatedDocs.translatedText[0]) },
         {
           context: 'content-script',
           tabId,
@@ -179,4 +179,3 @@ browser.contextMenus.onClicked.addListener((info): void => {
     }
   })();
 });
-// }
