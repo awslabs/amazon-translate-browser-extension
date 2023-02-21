@@ -17,8 +17,8 @@ limitations under the License.
 */
 
 import { onMessage, sendMessage } from 'webext-bridge';
-import { TranslateCommandData } from '../_contracts';
 import { lockr } from '../modules';
+import { TranslateCommandData } from '../_contracts';
 import { createOverlay, destroyOverlay } from './functions';
 import { startTranslation } from './translate';
 
@@ -91,7 +91,6 @@ function translateHandler() {
 function translateSelectionHandler() {
   onMessage<TranslateCommandData, 'translate-selection'>('translate-selection', ({ data }) => {
     const { translatedText } = data;
-
     const body = document.querySelector('body');
 
     const container = document.createElement('div');
