@@ -8,6 +8,12 @@ export interface TranslateData {
 
 export type Documents = string[];
 
+export type TranslatedDocuments = {
+  translatedText: Documents;
+  sourceLanguage: string;
+};
+
+export type SourceLanguauge = string;
 export interface NodeMap {
   [key: string]: Node;
 }

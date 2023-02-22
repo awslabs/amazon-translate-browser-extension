@@ -24,6 +24,7 @@
           targetLang: 'en',
         },
         languages,
+        prevtargetLang:'',
       };
     },
     mounted() {
@@ -33,7 +34,8 @@
       this.form.sourceLang = lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto');
       this.form.targetLang = lockr.get(ExtensionOptions.DEFAULT_TARGET_LANG, 'en');
       this.cachingEnabled = lockr.get(ExtensionOptions.CACHING_ENABLED, false);
-
+      this.prevtargetLang = lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto');
+      
       onMessage('status', async ({ data: _data }) => {
         const data = _data as unknown;
         const { status, message } = data as TranslateStatusData;
@@ -47,15 +49,20 @@
        * the Amazon Translate API. After the credentials are decrypted it sends them via a message
        * to the content-script along with the selected source and target language codes.
        */
+      
       async translatePage(e: Event) {
         try {
           e.preventDefault();
           this.status = '';
-          this.message = '';
-
+          this.message = '';          
           if ([this.region, this.accessKeyId, this.secretAccessKey].includes('')) {
             throw new Error('Your credentials are invalid.');
           }
+          if (this.prevtargetLang === this.form.targetLang) {            
+            this.status = 'complete';
+            this.message = `Translation already in target language`;
+            return
+          }         
 
           const credentials = {
             accessKeyId: this.accessKeyId,
@@ -71,13 +78,16 @@
           const message = {
             creds: config,
             langs: {
-              source: this.form.sourceLang,
+              source: this.form.sourceLang === lockr.get(ExtensionOptions.DEFAULT_SOURCE_LANG, 'auto')? 
+                      this.prevtargetLang : this.form.sourceLang,
               target: this.form.targetLang,
             },
             tabId,
             cachingEnabled: this.cachingEnabled,
           };
-
+          
+          this.prevtargetLang = this.form.targetLang;
+                   
           sendMessage('translate', message, {
             context: 'content-script',
             tabId,
@@ -135,7 +145,6 @@
           </option>
         </select>
       </div>
-
       <div>
         <select v-model="form.targetLang" class="aws-field">
           <option
@@ -147,7 +156,6 @@
           </option>
         </select>
       </div>
-
       <div>
         <aws-button
           class="submit-button"

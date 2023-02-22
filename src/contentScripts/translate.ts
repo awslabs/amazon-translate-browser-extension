@@ -84,22 +84,26 @@ async function translateFromApi(
   const tDocs = await translateMany(creds, langs.source, langs.target, docs);
 
   // Break the translated documents back into pages
-  const tPagesRaw = breakDocuments(tDocs);
-
+  const tPagesRaw = breakDocuments(tDocs.translatedText);
   // Sanitize the pages returned from Amazon Translate
   const tPagesSanitized = tPagesRaw.map(page => sanitizePage(page));
-
   // Break the pages into tuples of the node ID and the translated text
   const translatedPageMap = createPageMap(tPagesSanitized);
-
   // Make a cache text map for the selected language pair
   const textMap = makeCacheTextMap(pageMap, translatedPageMap);
 
   // Cache the translated text map
-  cacheTranslation(window.location.href, langs.source, langs.target, textMap);
+  cacheTranslation(window.location.href, tDocs.sourceLanguage, langs.target, textMap);
 
   // Apply the translated documents to the DOM
   tPagesSanitized.forEach(page =>
     pageIsValid(page) ? swapText(nodeMap, ...splitPage(page)) : undefined
   );
+
+  /**
+   * Caching the text map on the reverse order to avoid an extra api call.
+   * If the initial request is from English -> German it will cached along with German -> English
+   */
+  const textMapReverse = makeCacheTextMap(translatedPageMap, pageMap);
+  cacheTranslation(window.location.href, langs.target, tDocs.sourceLanguage, textMapReverse);
 }
